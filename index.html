@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Kartu Ujian Pro - New Layout</title>
+    <title>Generator Kartu Ujian Pro - Final Layout</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -32,28 +32,29 @@
         #print-area { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; width: 210mm; margin: 20px auto; }
         .card { width: 9.5cm; height: 6.8cm; border: 1.5px solid #000; background: #fff; padding: 10px; position: relative; box-sizing: border-box; page-break-inside: avoid; overflow: hidden; }
         
-        /* HEADER */
         .header { display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 8px; }
         .logo-img { width: 40px; height: 40px; object-fit: contain; }
         .header-text { flex-grow: 1; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 9px; text-align: center; line-height: 1.2; }
         
         .ruang-box { position: absolute; top: 62px; right: 10px; border: 1.5px solid #000; padding: 1px 6px; font-weight: 800; font-size: 11px; background: #fff; z-index: 5; }
         
-        /* LAYOUT BARU: DATA DI KIRI, FOTO DI BAWAH DATA */
-        .main-content { display: flex; flex-direction: column; gap: 8px; width: 60%; }
+        .main-content { display: flex; flex-direction: column; gap: 5px; width: 60%; }
         .details table { font-size: 10px; border-collapse: collapse; width: 100%; }
         .details td { padding: 1px 0; vertical-align: top; }
         .val { font-weight: 700; padding-left: 3px; display: inline-block; word-break: break-word; }
 
-        .photo-box { width: 2cm; height: 2.5cm; border: 1.2px solid #000; display: flex; align-items: center; justify-content: center; background: #fff; font-size: 7px; text-align: center; font-weight: 600; margin-top: 5px; }
+        .photo-box { width: 2.1cm; height: 2.8cm; border: 1.2px solid #000; display: flex; align-items: center; justify-content: center; background: #fff; font-size: 7px; text-align: center; font-weight: 600; margin-top: 2px; }
 
-        /* FOOTER PENGESAHAN */
-        .footer-right { position: absolute; bottom: 25px; right: 10px; text-align: center; font-size: 9px; width: 160px; }
-        .ttd-box { position: relative; height: 35px; width: 100%; margin: 2px 0; }
-        .stempel-img { position: absolute; height: 50px; left: 0px; top: -10px; z-index: 1; opacity: 0.8; mix-blend-mode: multiply; }
-        .ttd-img { position: absolute; height: 40px; left: 50%; transform: translateX(-40%); top: -5px; z-index: 2; mix-blend-mode: multiply; }
+        /* FOOTER PENGESAHAN (REVISI POSISI) */
+        .footer-right { position: absolute; bottom: 25px; right: 5px; text-align: center; font-size: 9px; width: 170px; }
+        .ttd-box { position: relative; height: 45px; width: 100%; margin: 2px 0; }
+        
+        /* Stempel Diperbesar */
+        .stempel-img { position: absolute; height: 65px; left: 15px; top: -10px; z-index: 1; opacity: 0.85; mix-blend-mode: multiply; }
+        
+        /* TTD Digeser ke Kiri agar nempel stempel */
+        .ttd-img { position: absolute; height: 45px; left: 35%; top: -5px; z-index: 2; mix-blend-mode: multiply; }
 
-        /* NOTE WAJIB */
         .note-footer { position: absolute; bottom: 5px; left: 10px; font-size: 8px; font-style: italic; font-weight: 600; color: #000; }
 
         @media (max-width: 800px) { #print-area { transform: scale(0.45); transform-origin: top center; display: block; } }
@@ -69,7 +70,7 @@
 <body>
 
 <div class="no-print">
-    <h2>🛠️ APLIKASI KARTU PESERTA</h2>
+    <h2>🛠️ Generator Kartu Ujian Pro</h2>
     <div class="grid-panel">
         <div class="input-card">
             <label>🏫 Header Sekolah</label>
@@ -122,9 +123,9 @@
     let img = { l: '', r: '', t: '', s: '' };
 
     function dlTpl() {
-        const ws = XLSX.utils.aoa_to_sheet([["Nama", "TTL", "NoPeserta", "Ruang"], ["Nama Contoh", "Pringgarata, 01-01-2005", "001", "01"]]);
+        const ws = XLSX.utils.aoa_to_sheet([["Nama", "TTL", "NoPeserta", "Ruang"], ["AHMAD FARHAN FATHONI", "Lingga Pura, 07 juni 2003", "001", "01"]]);
         const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data");
-        XLSX.writeFile(wb, "Template_Data_Siswa.xlsx");
+        XLSX.writeFile(wb, "Template_Data.xlsx");
     }
 
     function prev(e, k) {
