@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Kartu Ujian Pro - Mobile Friendly</title>
+    <title>Generator Kartu Ujian Pro - Full Custom</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -13,49 +13,44 @@
         .no-print { max-width: 900px; margin: 10px auto; padding: 20px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
         h2 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary); font-size: 20px; margin-top: 0; }
         
-        /* RESPONSIVE GRID PANEL */
         .grid-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        
-        /* Tampilan Satu Kolom untuk HP */
-        @media (max-width: 768px) {
-            .grid-panel { grid-template-columns: 1fr; }
-            .no-print { padding: 15px; }
-            h2 { font-size: 18px; }
-        }
+        @media (max-width: 768px) { .grid-panel { grid-template-columns: 1fr; } }
 
         .input-card { background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; }
-        label { display: block; font-weight: 700; font-size: 10px; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
-        input[type="text"] { width: 100%; padding: 10px; border: 2px solid #f1f5f9; border-radius: 8px; margin-bottom: 8px; font-size: 14px; box-sizing: border-box; }
+        label { display: block; font-weight: 700; font-size: 10px; color: #64748b; text-transform: uppercase; margin-bottom: 5px; margin-top: 5px; }
+        input[type="text"] { width: 100%; padding: 10px; border: 2px solid #f1f5f9; border-radius: 8px; margin-bottom: 8px; font-size: 13px; box-sizing: border-box; }
         
-        .file-wrapper { position: relative; margin-bottom: 10px; height: 45px; overflow: hidden; }
+        .file-wrapper { position: relative; margin-bottom: 10px; height: 42px; overflow: hidden; }
         .file-wrapper input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; }
-        .custom-file-btn { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #f1f5f9; color: #475569; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 2px dashed #cbd5e1; font-size: 11px; font-weight: 600; z-index: 1; box-sizing: border-box; padding: 5px; text-align: center; }
+        .custom-file-btn { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #f1f5f9; color: #475569; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 2px dashed #cbd5e1; font-size: 11px; font-weight: 600; z-index: 1; box-sizing: border-box; text-align: center; }
 
-        .btn-download-template { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 10px; border-radius: 8px; width: 100%; font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 15px; }
+        .btn-download-template { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 10px; border-radius: 8px; width: 100%; font-size: 11px; font-weight: 700; cursor: pointer; margin-bottom: 15px; }
         .btn-print { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 15px; border: none; border-radius: 12px; font-family: 'Montserrat', sans-serif; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; margin-top: 15px; }
 
-        /* AREA CETAK TETAP PRESTISI */
+        /* AREA CETAK F4 (6 Kartu) */
         #print-area { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; width: 210mm; margin: 20px auto; }
-        
-        /* HP Scroll Preview */
-        @media (max-width: 800px) {
-            #print-area { transform: scale(0.4); transform-origin: top center; width: 100%; overflow-x: auto; display: block; }
-            .card { margin-bottom: 10px; }
-        }
-
         .card { width: 9.5cm; height: 6.8cm; border: 1.5px solid #000; background: #fff; padding: 10px; position: relative; box-sizing: border-box; page-break-inside: avoid; overflow: hidden; }
+        
         .header { display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 8px; }
         .logo-img { width: 40px; height: 40px; object-fit: contain; }
         .header-text { flex-grow: 1; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 9px; text-align: center; line-height: 1.2; }
-        .ruang-box { position: absolute; top: 62px; right: 10px; border: 1.5px solid #000; padding: 1px 6px; font-weight: 800; font-size: 11px; background: #fff; }
+        
+        .ruang-box { position: absolute; top: 62px; right: 10px; border: 1.5px solid #000; padding: 1px 6px; font-weight: 800; font-size: 11px; background: #fff; z-index: 5; }
+        
         .content { display: flex; gap: 10px; margin-top: 5px; }
         .photo-box { width: 2.2cm; height: 3cm; border: 1.2px solid #000; display: flex; align-items: center; justify-content: center; background: #fff; font-size: 8px; text-align: center; font-weight: 600; }
+        
         .details table { font-size: 11px; border-collapse: collapse; width: 100%; }
         .details td { padding: 2px 0; }
         .val { font-weight: 700; padding-left: 5px; }
-        .footer { position: absolute; bottom: 8px; right: 10px; text-align: center; font-size: 9px; width: 170px; }
-        .ttd-container { height: 35px; position: relative; margin: 2px 0; }
-        .ttd-img { height: 45px; position: absolute; left: 50%; transform: translateX(-50%); top: -10px; mix-blend-mode: multiply; }
+
+        /* FOOTER & PENGESAHAN */
+        .footer { position: absolute; bottom: 8px; right: 10px; text-align: center; font-size: 9px; width: 175px; }
+        .ttd-box { position: relative; height: 40px; width: 100%; margin: 2px 0; }
+        .stempel-img { position: absolute; height: 55px; left: 10px; top: -15px; z-index: 1; opacity: 0.85; mix-blend-mode: multiply; }
+        .ttd-img { position: absolute; height: 45px; left: 50%; transform: translateX(-40%); top: -5px; z-index: 2; mix-blend-mode: multiply; }
+
+        @media (max-width: 800px) { #print-area { transform: scale(0.45); transform-origin: top center; display: block; } }
 
         @media print { 
             body { background: white; padding: 0; } 
@@ -68,115 +63,106 @@
 <body>
 
 <div class="no-print">
-    <h2>🚀 Kartu Ujian Pro (Mobile Ready)</h2>
+    <h2>🛠️ Aplikasi Generator Kartu Ujian </h2>
     <div class="grid-panel">
         <div class="input-card">
-            <label>🏫 Identitas Sekolah</label>
+            <label>🏫 Header Sekolah</label>
             <div style="display: flex; gap: 5px;">
-                <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">🖼️ Logo L</div><input type="file" onchange="previewImg(event, 'l-img')"></div>
-                <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">🖼️ Logo R</div><input type="file" onchange="previewImg(event, 'r-img')"></div>
+                <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">🖼️ Logo L</div><input type="file" onchange="prev(event, 'l')"></div>
+                <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">🖼️ Logo R</div><input type="file" onchange="prev(event, 'r')"></div>
             </div>
-            <input type="text" id="sch_name" value="SDN 1 LINGGA PURA TP. 2025/2026" oninput="renderCards()">
+            <input type="text" id="sch_name" value="SDN 2 LINGGA PURA TP. 2025/2026" oninput="render()">
             
-            <label>🖋️ Pengesahan</label>
-            <div class="file-wrapper"><div class="custom-file-btn">✍️ Upload Tanda Tangan</div><input type="file" onchange="previewImg(event, 't-img')"></div>
-            <input type="text" id="ks_name" value="ROSYIDIN, S.Pd" oninput="renderCards()">
-            <input type="text" id="ks_nip" value="NIP. 19700605 201410 1 003" oninput="renderCards()">
+            <label>🖋️ Lokasi & Tanggal TTD</label>
+            <input type="text" id="tgl_pelaksanaan" value="Pringgarata, 12 Mei 2026" oninput="render()" placeholder="Contoh: Jakarta, 20 Juni 2026">
+            
+            <label>👤 Nama & NIP Kepala Sekolah</label>
+            <input type="text" id="ks_name" value="NAMA KEPSEK" oninput="render()">
+            <input type="text" id="ks_nip" value="NIP. 19700605 201410 1 003" oninput="render()">
         </div>
 
         <div class="input-card">
-            <label>⌨️ Input & Template</label>
-            <button class="btn-download-template" onclick="downloadTemplate()">📥 Download Template Excel</button>
-            
-            <div style="background: #f8fafc; padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-                <input type="text" id="m_nama" placeholder="Nama Siswa">
-                <input type="text" id="m_ttl" placeholder="TTL">
-                <div style="display:flex; gap:5px">
-                    <input type="text" id="m_nomer" placeholder="No. Peserta" style="flex:2">
-                    <input type="text" id="m_ruang" placeholder="Ruang" style="flex:1">
-                </div>
-                <button onclick="addManual()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">➕ Tambah Manual</button>
+            <label>🛡️ Stempel & Tanda Tangan</label>
+            <div style="display: flex; gap: 5px;">
+                <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">✅ Upload TTD</div><input type="file" onchange="prev(event, 't')"></div>
+                <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">💠 Upload Stempel</div><input type="file" onchange="prev(event, 's')"></div>
             </div>
-            
-            <label>📂 Upload Data Excel</label>
+
+            <label>📂 Data Siswa (Excel)</label>
+            <button class="btn-download-template" onclick="dlTpl()">📥 Download Template Excel</button>
             <div class="file-wrapper">
                 <div class="custom-file-btn" style="background: #ecfdf5; border-color: #a7f3d0; color: #065f46;">📥 Pilih File Excel</div>
-                <input type="file" id="fileInput" accept=".xlsx, .xls">
+                <input type="file" id="fileIn" accept=".xlsx, .xls">
             </div>
+            <p style="font-size: 10px; color: #64748b; margin: 0;">*Format: Nama, TTL, NoPeserta, Ruang</p>
         </div>
     </div>
-    <button class="btn-print" onclick="window.print()">🔥 CETAK KARTU</button>
+    <button class="btn-print" onclick="window.print()">🔥 CETAK 6 KARTU / HALAMAN</button>
 </div>
 
 <div id="print-area"></div>
 
 <script>
-    let studentData = [];
-    let imgs = { logoL: '', logoR: '', ttd: '' };
+    let data = [];
+    let img = { l: '', r: '', t: '', s: '' };
 
-    function downloadTemplate() {
-        const ws = XLSX.utils.aoa_to_sheet([["Nama", "TTL", "NoPeserta", "Ruang"], ["Ahmad", "Jakarta, 01-01-2005", "001", "01"]]);
+    function dlTpl() {
+        const ws = XLSX.utils.aoa_to_sheet([["Nama", "TTL", "NoPeserta", "Ruang"], ["Ahmad Farhan", "Linggapura, 07-06-2003", "001", "01"]]);
         const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data");
-        XLSX.writeFile(wb, "Template_Kartu.xlsx");
+        XLSX.writeFile(wb, "Template_Kartu_Ujian.xlsx");
     }
 
-    function previewImg(e, type) {
+    function prev(e, k) {
         if (!e.target.files[0]) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-            if(type === 'l-img') imgs.logoL = reader.result;
-            if(type === 'r-img') imgs.logoR = reader.result;
-            if(type === 't-img') imgs.ttd = reader.result;
-            renderCards();
-        };
-        reader.readAsDataURL(e.target.files[0]);
+        const r = new FileReader();
+        r.onload = () => { img[k] = r.result; render(); };
+        r.readAsDataURL(e.target.files[0]);
     }
 
-    function addManual() {
-        const d = { Nama: document.getElementById('m_nama').value, TTL: document.getElementById('m_ttl').value, NoPeserta: document.getElementById('m_nomer').value, Ruang: document.getElementById('m_ruang').value };
-        if(!d.Nama) return alert("Minimal Nama diisi!");
-        studentData.push(d); renderCards();
-        ['m_nama','m_ttl','m_nomer','m_ruang'].forEach(id => document.getElementById(id).value = '');
-    }
-
-    document.getElementById('fileInput').addEventListener('change', function(e) {
+    document.getElementById('fileIn').addEventListener('change', function(e) {
         if (!e.target.files[0]) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
+        const r = new FileReader();
+        r.onload = (e) => {
             const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-            studentData = [...studentData, ...XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])];
-            renderCards();
+            data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+            render();
         };
-        reader.readAsArrayBuffer(e.target.files[0]);
+        r.readAsArrayBuffer(e.target.files[0]);
     });
 
-    function renderCards() {
+    function render() {
         const area = document.getElementById('print-area'); area.innerHTML = '';
         const sch = document.getElementById('sch_name').value;
+        const tgl = document.getElementById('tgl_pelaksanaan').value;
         const ks = document.getElementById('ks_name').value;
         const nip = document.getElementById('ks_nip').value;
-        studentData.forEach(s => {
-            const card = document.createElement('div'); card.className = 'card';
-            card.innerHTML = `<div class="header">
-                <img src="${imgs.logoL}" class="logo-img" style="${!imgs.logoL?'visibility:hidden':''}">
-                <div class="header-text">KARTU PESERTA UJIAN SEKOLAH<br>${sch}</div>
-                <img src="${imgs.logoR}" class="logo-img" style="${!imgs.logoR?'visibility:hidden':''}">
-            </div>
-            <div class="ruang-box">RUANG: ${s.Ruang || s.ruang || '-'}</div>
-            <div class="content">
-                <div class="photo-box">PAS FOTO<br>3 x 4</div>
-                <div class="details"><table>
-                    <tr><td width="70">No. Peserta</td><td>: <span class="val">${s.NoPeserta || s.nomer || '-'}</span></td></tr>
-                    <tr><td>Nama</td><td>: <span class="val" style="text-transform:uppercase">${s.Nama || s.nama || '-'}</span></td></tr>
-                    <tr><td>TTL</td><td>: <span class="val">${s.TTL || s.ttl || '-'}</span></td></tr>
-                </table></div>
-            </div>
-            <div class="footer">
-                Pringgarata, ${new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})}<br>Kepala Sekolah,
-                <div class="ttd-container">${imgs.ttd ? `<img src="${imgs.ttd}" class="ttd-img">` : ''}</div>
-                <div><b>${ks}</b></div><div style="font-size:8px">${nip}</div>
-            </div>`;
-            area.appendChild(card);
+
+        data.forEach(s => {
+            const div = document.createElement('div'); div.className = 'card';
+            div.innerHTML = `
+                <div class="header">
+                    <img src="${img.l}" class="logo-img" style="${!img.l?'visibility:hidden':''}">
+                    <div class="header-text">KARTU PESERTA UJIAN SEKOLAH<br>${sch}</div>
+                    <img src="${img.r}" class="logo-img" style="${!img.r?'visibility:hidden':''}">
+                </div>
+                <div class="ruang-box">RUANG: ${s.Ruang || s.ruang || '-'}</div>
+                <div class="content">
+                    <div class="photo-box">PAS FOTO<br>3 x 4</div>
+                    <div class="details"><table>
+                        <tr><td width="70">No. Peserta</td><td>: <span class="val">${s.NoPeserta || s.nomer || '-'}</span></td></tr>
+                        <tr><td>Nama</td><td>: <span class="val" style="text-transform:uppercase">${s.Nama || s.nama || '-'}</span></td></tr>
+                        <tr><td>TTL</td><td>: <span class="val">${s.TTL || s.ttl || '-'}</span></td></tr>
+                    </table></div>
+                </div>
+                <div class="footer">
+                    ${tgl}<br>Kepala Sekolah,
+                    <div class="ttd-box">
+                        ${img.s ? `<img src="${img.s}" class="stempel-img">` : ''}
+                        ${img.t ? `<img src="${img.t}" class="ttd-img">` : ''}
+                    </div>
+                    <div><b>${ks}</b></div><div style="font-size:8px">${nip}</div>
+                </div>`;
+            area.appendChild(div);
         });
     }
 </script>
