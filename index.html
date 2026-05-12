@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Kartu Ujian - Final Look</title>
+    <title>Generator Kartu Ujian - Final Layout</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #2563eb; --dark: #0f172a; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; margin: 0; padding: 20px; }
         
-        /* UI Dashboard */
         .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .grid-main { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .panel { background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 20px; border-radius: 15px; }
@@ -23,7 +22,6 @@
         .upload-field input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
         .upload-label { position: absolute; top:0; left:0; width: 100%; height: 100%; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; padding: 0 12px; font-size: 12px; font-weight: 600; color: #64748b; box-sizing: border-box; }
 
-        /* KARTU FIX - BERDASARKAN IMAGE_9E387B.PNG */
         #print-area { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10mm; margin-top: 30px; }
         .card { 
             width: 9.5cm; height: 6.8cm; border: 1.5px solid #000; padding: 8px; position: relative; 
@@ -36,12 +34,10 @@
         
         .tag-ruang { position: absolute; top: 60px; right: 15px; font-size: 11px; font-weight: 600; }
 
-        /* Data Section */
         .data-table { font-size: 10.5px; width: 100%; border-collapse: collapse; margin-bottom: 10px; }
         .data-table td { padding: 1.5px 0; vertical-align: top; }
         .label-col { width: 95px; }
 
-        /* Bottom Layout: Foto & TTD Sejajar */
         .bottom-container { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 5px; }
         .photo-box { width: 2.1cm; height: 2.8cm; border: 1.5px solid #000; display: flex; align-items: center; justify-content: center; font-size: 7px; background: #f0f0f0; font-weight: 700; }
         
@@ -49,11 +45,19 @@
         .sign-area { position: relative; height: 45px; }
         .img-s { position: absolute; height: 60px; left: 10px; top: -10px; opacity: 0.6; mix-blend-mode: multiply; z-index: 1; }
         .img-t { position: absolute; height: 45px; left: 45px; top: 0; mix-blend-mode: multiply; z-index: 2; }
-        .ks-name { font-size: 10px; font-weight: 800; border-bottom: none; }
+        .ks-name { font-size: 10px; font-weight: 800; }
         .ks-nip { font-size: 9px; margin-top: 1px; }
 
-        /* Note 1 Baris di paling bawah - SEPERTI IMAGE_9E387B.PNG */
-        .note-text { position: absolute; bottom: 8px; left: 95px; font-size: 7px; color: #444; width: 140px; line-height: 1.1; }
+        /* PERBAIKAN POSISI NOTE KE PALING KIRI */
+        .note-text { 
+            position: absolute; 
+            bottom: 6px; 
+            left: 8px; 
+            font-size: 7px; 
+            color: #444; 
+            width: auto; 
+            font-style: italic;
+        }
 
         @media print { .container { display: none; } #print-area { margin: 0; } }
     </style>
@@ -143,7 +147,7 @@
                     <img src="${img.lr}" class="logo-img" style="${!img.lr ? 'visibility:hidden' : ''}">
                 </div>
                 
-                <div class="tag-ruang"># < Ruang ${s.Ruang || '1'} ></div>
+                <div class="tag-ruang"># < Ruang ${s.Ruang || '01'} ></div>
 
                 <table class="data-table">
                     <tr><td class="label-col">No. Peserta</td><td>: ${s.NoPeserta || '-'}</td></tr>
