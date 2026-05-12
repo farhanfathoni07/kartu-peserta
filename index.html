@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Kartu Ujian Pro - Full Custom</title>
+    <title>Generator Kartu Ujian Pro - Full Features</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -25,6 +25,8 @@
         .custom-file-btn { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #f1f5f9; color: #475569; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 2px dashed #cbd5e1; font-size: 11px; font-weight: 600; z-index: 1; box-sizing: border-box; text-align: center; }
 
         .btn-download-template { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 10px; border-radius: 8px; width: 100%; font-size: 11px; font-weight: 700; cursor: pointer; margin-bottom: 15px; }
+        .btn-add-manual { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 5px; margin-bottom: 15px; }
+
         .btn-print { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 15px; border: none; border-radius: 12px; font-family: 'Montserrat', sans-serif; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; margin-top: 15px; }
 
         /* AREA CETAK F4 (6 Kartu) */
@@ -63,7 +65,7 @@
 <body>
 
 <div class="no-print">
-    <h2>🛠️ Aplikasi Generator Kartu Ujian </h2>
+    <h2>🛠️ Generator Kartu Ujian Pro</h2>
     <div class="grid-panel">
         <div class="input-card">
             <label>🏫 Header Sekolah</label>
@@ -71,33 +73,42 @@
                 <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">🖼️ Logo L</div><input type="file" onchange="prev(event, 'l')"></div>
                 <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">🖼️ Logo R</div><input type="file" onchange="prev(event, 'r')"></div>
             </div>
-            <input type="text" id="sch_name" value="SDN 2 LINGGA PURA TP. 2025/2026" oninput="render()">
+            <input type="text" id="sch_name" value="SMAN 1 PRINGGARATA TP. 2025/2026" oninput="render()">
             
             <label>🖋️ Lokasi & Tanggal TTD</label>
-            <input type="text" id="tgl_pelaksanaan" value="Pringgarata, 12 Mei 2026" oninput="render()" placeholder="Contoh: Jakarta, 20 Juni 2026">
+            <input type="text" id="tgl_pelaksanaan" value="Pringgarata, 12 Mei 2026" oninput="render()">
             
-            <label>👤 Nama & NIP Kepala Sekolah</label>
-            <input type="text" id="ks_name" value="NAMA KEPSEK" oninput="render()">
-            <input type="text" id="ks_nip" value="NIP. 19700605 201410 1 003" oninput="render()">
-        </div>
+            <label>👤 Kepala Sekolah</label>
+            <input type="text" id="ks_name" value="H. IWAN RIAMAN, S.Pd., M.Pd." oninput="render()">
+            <input type="text" id="ks_nip" value="NIP. 19711231 199702 1 014" oninput="render()">
 
-        <div class="input-card">
             <label>🛡️ Stempel & Tanda Tangan</label>
             <div style="display: flex; gap: 5px;">
                 <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">✅ Upload TTD</div><input type="file" onchange="prev(event, 't')"></div>
                 <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">💠 Upload Stempel</div><input type="file" onchange="prev(event, 's')"></div>
             </div>
+        </div>
 
-            <label>📂 Data Siswa (Excel)</label>
+        <div class="input-card">
+            <label>⌨️ Tambah Manual</label>
+            <input type="text" id="m_nama" placeholder="Nama Siswa">
+            <input type="text" id="m_ttl" placeholder="TTL (Tempat, Tgl Lahir)">
+            <div style="display:flex; gap:5px">
+                <input type="text" id="m_nomer" placeholder="No. Peserta" style="flex:2">
+                <input type="text" id="m_ruang" placeholder="Ruang" style="flex:1">
+            </div>
+            <button class="btn-add-manual" onclick="addManual()">➕ Tambah ke Daftar</button>
+
+            <label>📂 Import Massal (Excel)</label>
             <button class="btn-download-template" onclick="dlTpl()">📥 Download Template Excel</button>
             <div class="file-wrapper">
                 <div class="custom-file-btn" style="background: #ecfdf5; border-color: #a7f3d0; color: #065f46;">📥 Pilih File Excel</div>
                 <input type="file" id="fileIn" accept=".xlsx, .xls">
             </div>
-            <p style="font-size: 10px; color: #64748b; margin: 0;">*Format: Nama, TTL, NoPeserta, Ruang</p>
+            <button onclick="data = []; render();" style="width:100%; border:none; background:none; color:#ef4444; font-size:10px; cursor:pointer; text-decoration:underline;">❌ Hapus Semua Data Siswa</button>
         </div>
     </div>
-    <button class="btn-print" onclick="window.print()">🔥 CETAK 6 KARTU / HALAMAN</button>
+    <button class="btn-print" onclick="window.print()">🔥 CETAK KARTU (F4)</button>
 </div>
 
 <div id="print-area"></div>
@@ -107,9 +118,9 @@
     let img = { l: '', r: '', t: '', s: '' };
 
     function dlTpl() {
-        const ws = XLSX.utils.aoa_to_sheet([["Nama", "TTL", "NoPeserta", "Ruang"], ["Ahmad Farhan", "Linggapura, 07-06-2003", "001", "01"]]);
+        const ws = XLSX.utils.aoa_to_sheet([["Nama", "TTL", "NoPeserta", "Ruang"], ["Nama Contoh", "Pringgarata, 01-01-2005", "001", "01"]]);
         const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data");
-        XLSX.writeFile(wb, "Template_Kartu_Ujian.xlsx");
+        XLSX.writeFile(wb, "Template_Data_Siswa.xlsx");
     }
 
     function prev(e, k) {
@@ -119,12 +130,25 @@
         r.readAsDataURL(e.target.files[0]);
     }
 
+    function addManual() {
+        const d = { 
+            Nama: document.getElementById('m_nama').value, 
+            TTL: document.getElementById('m_ttl').value, 
+            NoPeserta: document.getElementById('m_nomer').value, 
+            Ruang: document.getElementById('m_ruang').value 
+        };
+        if(!d.Nama) return alert("Minimal isi nama siswa!");
+        data.push(d);
+        render();
+        ['m_nama','m_ttl','m_nomer','m_ruang'].forEach(id => document.getElementById(id).value = '');
+    }
+
     document.getElementById('fileIn').addEventListener('change', function(e) {
         if (!e.target.files[0]) return;
         const r = new FileReader();
         r.onload = (e) => {
             const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-            data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+            data = [...data, ...XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])];
             render();
         };
         r.readAsArrayBuffer(e.target.files[0]);
@@ -149,7 +173,7 @@
                 <div class="content">
                     <div class="photo-box">PAS FOTO<br>3 x 4</div>
                     <div class="details"><table>
-                        <tr><td width="70">No. Peserta</td><td>: <span class="val">${s.NoPeserta || s.nomer || '-'}</span></td></tr>
+                        <tr><td width="70">No. Peserta</td><td>: <span class="val">${s.NoPeserta || s.nomer || s.nomor || '-'}</span></td></tr>
                         <tr><td>Nama</td><td>: <span class="val" style="text-transform:uppercase">${s.Nama || s.nama || '-'}</span></td></tr>
                         <tr><td>TTL</td><td>: <span class="val">${s.TTL || s.ttl || '-'}</span></td></tr>
                     </table></div>
