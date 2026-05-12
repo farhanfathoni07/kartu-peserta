@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Kartu Ujian</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        .no-print { background: white; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .btn { padding: 10px 15px; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .btn-primary { background: #2ecc71; color: white; }
+        .btn-print { background: #3498db; color: white; margin-top: 20px; }
+        
+        /* Desain Kartu (Sesuai image_e0fc0e.png) */
+        #print-area { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 30px; }
+        .card { width: 12cm; height: 8cm; border: 2px solid #000; background: #fff; padding: 10px; position: relative; box-sizing: border-box; page-break-inside: avoid; }
+        .header { display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
+        .logo { width: 50px; height: 50px; }
+        .header-text { text-align: center; flex-grow: 1; text-transform: uppercase; font-weight: bold; font-size: 14px; }
+        .content { display: flex; font-size: 12px; }
+        .photo-box { width: 3cm; height: 4cm; border: 1px solid #000; display: flex; align-items: center; justify-content: center; background: #ddd; margin-right: 15px; overflow: hidden; }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .details table { border-collapse: collapse; width: 100%; }
+        .details td { padding: 2px 0; vertical-align: top; }
+        .footer { position: absolute; bottom: 10px; right: 20px; text-align: center; font-size: 11px; }
+        .signature-space { height: 40px; }
+
+        @media print {
+            .no-print { display: none; }
+            body { background: none; padding: 0; }
+            #print-area { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <h2>Pembuat Kartu Peserta Ujian</h2>
+    <div class="form-group">
+        <label>Upload Excel/CSV (Kolom: Nama, NoPeserta, NIS, TTL, Program, Ruang)</label>
+        <input type="file" id="fileInput" accept=".xlsx, .xls, .csv">
+    </div>
+    <hr>
+    <h3>Input Manual</h3>
+    <div class="form-group">
+        <input type="text" id="m_nama" placeholder="Nama Lengkap">
+    </div>
+    <div class="form-group">
+        <input type="text" id="m_nopes" placeholder="No. Peserta">
+    </div>
+    <button class="btn btn-primary" onclick="addManual()">Tambah Peserta</button>
+    <button class="btn btn-print" onclick="window.print()">Cetak Semua Kartu</button>
+</div>
+
+<div id="print-area">
+    <!-- Kartu akan muncul di sini -->
+</div>
+
+<script>
+    const printArea = document.getElementById('print-area');
+
+    function createCard(data) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="header">
+                <div class="header-text">
+                    KARTU PESERTA UJIAN SEKOLAH<br>
+                    NAMA SEKOLAH ANDA TP. 2025/2026
+                </div>
+            </div>
+            <div style="float:right; font-weight:bold; border:1px solid #000; padding:2px 10px;">&lt;${data.Ruang || 'Ruang 1'}&gt;</div>
+            <div class="content">
+                <div class="photo-box">Photo 3x4</div>
+                <div class="details">
+                    <table>
+                        <tr><td>No. Peserta</td><td>: ${data.NoPeserta}</td></tr>
+                        <tr><td>Nama Peserta</td><td>: <b>${data.Nama}</b></td></tr>
+                        <tr><td>NIS</td><td>: ${data.NIS || '-'}</td></tr>
+                        <tr><td>Tempat & Tgl Lahir</td><td>: ${data.TTL || '-'}</td></tr>
+                        <tr><td>Program Studi</td><td>: ${data.Program || '-'}</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="footer">
+                Kota, ${new Date().toLocaleDateString('id-ID')}<br>
+                Kepala Sekolah,
+                <div class="signature-space"></div>
+                <b>NAMA KEPALA SEKOLAH, S.Pd</b><br>
+                NIP. 19711231 199702 1 014
+            </div>
+        `;
+        printArea.appendChild(card);
+    }
+
+    // Logic untuk File Upload
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(sheet);
+            
+            printArea.innerHTML = ''; // Clear previous
+            json.forEach(row => createCard(row));
+        };
+        reader.readAsArrayBuffer(e.target.files[0]);
+    });
+
+    function addManual() {
+        const data = {
+            Nama: document.getElementById('m_nama').value,
+            NoPeserta: document.getElementById('m_nopes').value,
+            NIS: '0000', TTL: 'Kota, 01 Jan 2000', Program: 'IPA/IPS', Ruang: '1'
+        };
+        createCard(data);
+    }
+</script>
+
+</body>
+</html>
