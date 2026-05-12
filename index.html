@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Kartu Ujian Pro - Final Layout</title>
+    <title>Generator Kartu Ujian Pro - Background Edition</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1e3a8a; --secondary: #3b82f6; --bg: #f8fafc; }
         body { font-family: 'Open Sans', sans-serif; background: var(--bg); margin: 0; color: #1e293b; padding: 10px; }
         
+        /* Panel Kontrol */
         .no-print { max-width: 900px; margin: 10px auto; padding: 20px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
         h2 { font-family: 'Montserrat', sans-serif; text-align: center; color: var(--primary); font-size: 20px; margin-top: 0; }
         
@@ -24,13 +25,42 @@
         .file-wrapper input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; }
         .custom-file-btn { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #f1f5f9; color: #475569; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 2px dashed #cbd5e1; font-size: 11px; font-weight: 600; z-index: 1; box-sizing: border-box; text-align: center; }
 
-        .btn-download-template { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 10px; border-radius: 8px; width: 100%; font-size: 11px; font-weight: 700; cursor: pointer; margin-bottom: 15px; }
         .btn-add-manual { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 5px; margin-bottom: 15px; }
         .btn-print { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 15px; border: none; border-radius: 12px; font-family: 'Montserrat', sans-serif; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; margin-top: 15px; }
 
         /* AREA CETAK */
         #print-area { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; width: 210mm; margin: 20px auto; }
-        .card { width: 9.5cm; height: 6.8cm; border: 1.5px solid #000; background: #fff; padding: 10px; position: relative; box-sizing: border-box; page-break-inside: avoid; overflow: hidden; }
+        
+        /* KARTU DENGAN BACKGROUND */
+        .card { 
+            width: 9.5cm; 
+            height: 6.8cm; 
+            border: 1.5px solid #000; 
+            padding: 10px; 
+            position: relative; 
+            box-sizing: border-box; 
+            page-break-inside: avoid; 
+            overflow: hidden;
+            /* BACKGROUND GRADASI */
+            background: linear-gradient(180deg, #ffffff 75%, #f0f7ff 100%);
+        }
+
+        /* WATERMARK LOGO TRANSAPARAN DI TENGAH */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 60%;
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); 
+            opacity: 0.04;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .header, .main-content, .footer-right, .note-footer { position: relative; z-index: 1; }
         
         .header { display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 8px; }
         .logo-img { width: 40px; height: 40px; object-fit: contain; }
@@ -45,14 +75,10 @@
 
         .photo-box { width: 2.1cm; height: 2.8cm; border: 1.2px solid #000; display: flex; align-items: center; justify-content: center; background: #fff; font-size: 7px; text-align: center; font-weight: 600; margin-top: 2px; }
 
-        /* FOOTER PENGESAHAN (REVISI POSISI) */
+        /* FOOTER PENGESAHAN */
         .footer-right { position: absolute; bottom: 25px; right: 5px; text-align: center; font-size: 9px; width: 170px; }
         .ttd-box { position: relative; height: 45px; width: 100%; margin: 2px 0; }
-        
-        /* Stempel Diperbesar */
         .stempel-img { position: absolute; height: 65px; left: 15px; top: -10px; z-index: 1; opacity: 0.85; mix-blend-mode: multiply; }
-        
-        /* TTD Digeser ke Kiri agar nempel stempel */
         .ttd-img { position: absolute; height: 45px; left: 35%; top: -5px; z-index: 2; mix-blend-mode: multiply; }
 
         .note-footer { position: absolute; bottom: 5px; left: 10px; font-size: 8px; font-style: italic; font-weight: 600; color: #000; }
@@ -70,18 +96,15 @@
 <body>
 
 <div class="no-print">
-    <h2>🛠️ Generator Kartu Ujian Pro</h2>
+    <h2>🛠️ Generator Kartu Ujian Pro - Background Edition</h2>
     <div class="grid-panel">
         <div class="input-card">
             <label>🏫 Header Sekolah</label>
+            <input type="text" id="sch_name" value="SDN 1 LINGGA PURA TP. 2025/2026" oninput="render()">
             <div style="display: flex; gap: 5px;">
                 <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">🖼️ Logo L</div><input type="file" onchange="prev(event, 'l')"></div>
                 <div class="file-wrapper" style="flex:1"><div class="custom-file-btn">🖼️ Logo R</div><input type="file" onchange="prev(event, 'r')"></div>
             </div>
-            <input type="text" id="sch_name" value="SDN 1 LINGGA PURA TP. 2025/2026" oninput="render()">
-            
-            <label>🖋️ Lokasi & Tanggal TTD</label>
-            <input type="text" id="tgl_pelaksanaan" value="Lingga Pura, 18 Mei 2026" oninput="render()">
             
             <label>👤 Kepala Sekolah</label>
             <input type="text" id="ks_name" value="ROSYIDIN, S.Pd" oninput="render()">
@@ -105,12 +128,10 @@
             <button class="btn-add-manual" onclick="addManual()">➕ Tambah ke Daftar</button>
 
             <label>📂 Import Massal (Excel)</label>
-            <button class="btn-download-template" onclick="dlTpl()">📥 Download Template Excel</button>
             <div class="file-wrapper">
                 <div class="custom-file-btn" style="background: #ecfdf5; border-color: #a7f3d0; color: #065f46;">📥 Pilih File Excel</div>
                 <input type="file" id="fileIn" accept=".xlsx, .xls">
             </div>
-            <button onclick="data = []; render();" style="width:100%; border:none; background:none; color:#ef4444; font-size:10px; cursor:pointer; text-decoration:underline;">❌ Hapus Semua Data Siswa</button>
         </div>
     </div>
     <button class="btn-print" onclick="window.print()">🔥 CETAK KARTU (F4)</button>
@@ -121,12 +142,6 @@
 <script>
     let data = [];
     let img = { l: '', r: '', t: '', s: '' };
-
-    function dlTpl() {
-        const ws = XLSX.utils.aoa_to_sheet([["Nama", "TTL", "NoPeserta", "Ruang"], ["AHMAD FARHAN FATHONI", "Lingga Pura, 07 juni 2003", "001", "01"]]);
-        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data");
-        XLSX.writeFile(wb, "Template_Data.xlsx");
-    }
 
     function prev(e, k) {
         if (!e.target.files[0]) return;
@@ -162,7 +177,6 @@
     function render() {
         const area = document.getElementById('print-area'); area.innerHTML = '';
         const sch = document.getElementById('sch_name').value;
-        const tgl = document.getElementById('tgl_pelaksanaan').value;
         const ks = document.getElementById('ks_name').value;
         const nip = document.getElementById('ks_nip').value;
 
@@ -186,7 +200,7 @@
                 </div>
 
                 <div class="footer-right">
-                    ${tgl}<br>Kepala Sekolah,
+                    Lingga Pura, 18 Mei 2026<br>Kepala Sekolah,
                     <div class="ttd-box">
                         ${img.s ? `<img src="${img.s}" class="stempel-img">` : ''}
                         ${img.t ? `<img src="${img.t}" class="ttd-img">` : ''}
