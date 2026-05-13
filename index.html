@@ -3,14 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Kartu Ujian - Dengan Foto Siswa</title>
+    <title>Generator Kartu Ujian - Pro Version</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #2563eb; --dark: #0f172a; --success: #059669; --photo-bg: #f1f5f9; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; margin: 0; padding: 20px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; margin: 0; padding: 0; }
         
-        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        /* Navbar Header Style */
+        .top-navbar {
+            background: white;
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .profile-section { display: flex; align-items: center; gap: 12px; }
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+        .profile-name { font-weight: 700; font-size: 14px; color: var(--dark); }
+
+        .container { max-width: 1000px; margin: 0 auto 50px auto; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .grid-main { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .panel { background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 20px; border-radius: 15px; }
         .full { grid-column: span 2; }
@@ -26,7 +49,7 @@
         .upload-field input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
         .upload-label { position: absolute; top:0; left:0; width: 100%; height: 100%; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; padding: 0 12px; font-size: 11px; font-weight: 600; color: #64748b; box-sizing: border-box; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
-        #print-area { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10mm; margin-top: 30px; }
+        #print-area { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10mm; margin: 30px auto; width: fit-content; }
         .card { 
             width: 9.5cm; height: 6.8cm; border: 1.5px solid #000; padding: 8px; position: relative; 
             box-sizing: border-box; background: #fff; overflow: hidden; page-break-inside: avoid;
@@ -47,7 +70,6 @@
 
         .bottom-container { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 5px; }
         
-        /* FIX: Photo Box sekarang bisa menampilkan gambar */
         .photo-box { 
             width: 2.1cm; height: 2.8cm; border: 1.5px solid #000; 
             display: flex; align-items: center; justify-content: center; 
@@ -65,13 +87,27 @@
 
         .note-text { position: absolute; bottom: 6px; left: 8px; font-size: 7px; color: #444; width: auto; font-style: italic; }
 
-        @media print { .container { display: none; } #print-area { margin: 0; } }
+        @media print { 
+            .container, .top-navbar { display: none; } 
+            body { background: white; padding: 0; }
+            #print-area { margin: 0; } 
+        }
     </style>
 </head>
 <body>
 
+<!-- BAGIAN ATAS DENGAN ICON PROFIL -->
+<nav class="top-navbar">
+    <div style="font-weight: 800; color: var(--primary); letter-spacing: -0.5px;">EXAM-GEN V2.0</div>
+    <div class="profile-section">
+        <span class="profile-name">AHMAD FARHAN FATHONI</span>
+        <!-- Menggunakan file yang dilampirkan -->
+        <img src="WhatsApp Image 2026-05-13 at 13.16.23.jpeg" class="profile-img" alt="Admin Profile">
+    </div>
+</nav>
+
 <div class="container">
-    <header><h1 style="text-align: center; color: var(--primary);">KARTU UJIAN GENERATOR</h1></header>
+    <header><h1 style="text-align: center; color: var(--primary); margin-top: 0;">KARTU UJIAN GENERATOR</h1></header>
     
     <button class="btn btn-template" onclick="downloadTemplate()">📊 UNDUH TEMPLATE EXCEL</button>
 
@@ -83,7 +119,6 @@
                 <div class="upload-label" id="lblExcel">Pilih Data Peserta (Excel)</div>
             </div>
             
-            <!-- FITUR BARU: UPLOAD FOTO MASSAL -->
             <div class="upload-field">
                 <input type="file" id="bulkPhotos" accept="image/*" multiple onchange="handleBulkPhotos(event)">
                 <div class="upload-label" id="lblPhotos">Upload Foto Siswa (Banyak Sekaligus)</div>
@@ -121,7 +156,6 @@
                 <input type="text" id="m_ruang" placeholder="Ruang">
                 <button class="btn btn-add" onclick="addManual()">Tambah</button>
             </div>
-            <p style="font-size: 11px; color: #64748b; margin-top: 5px;">*Untuk input manual, foto akan menggunakan placeholder default.</p>
         </div>
     </div>
     <button class="btn btn-print" onclick="window.print()">CETAK KARTU</button>
@@ -131,37 +165,34 @@
 
 <script>
     let dataSiswa = [];
-    let photoDatabase = {}; // Menyimpan data base64 foto berdasarkan nama file
+    let photoDatabase = {};
     let img = { lk: '', lr: '', t: '', s: '' };
 
     function downloadTemplate() {
         const header = [["Nama", "NoPeserta", "TTL", "Ruang", "Foto"]];
-        const dataContoh = [["AHMAD FARHAN FATHONI", "001", "Lingga Pura, 07 Juni 2003", "01", "farhan.jpg"]];
+        const dataContoh = [["PESERTA CONTOH", "001", "Lingga Pura, 07 Juni 2003", "01", "foto_siswa.jpg"]];
         const ws = XLSX.utils.aoa_to_sheet([...header, ...dataContoh]);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Data Peserta");
-        XLSX.writeFile(wb, "Template_Kartu_Ujian_Foto.xlsx");
+        XLSX.writeFile(wb, "Template_Ujian.xlsx");
     }
 
-    // Fungsi membaca banyak foto sekaligus
     function handleBulkPhotos(event) {
         const files = event.target.files;
         if (!files.length) return;
-        document.getElementById('lblPhotos').innerText = `${files.length} Foto Berhasil Dimuat`;
-
+        document.getElementById('lblPhotos').innerText = `${files.length} Foto Siap`;
         Array.from(files).forEach(file => {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                photoDatabase[file.name] = e.target.result;
-                render(); // Re-render kartu jika foto masuk
-            };
+            reader.onload = (e) => { photoDatabase[file.name] = e.target.result; render(); };
             reader.readAsDataURL(file);
         });
     }
 
     function addManual() {
-        const n = document.getElementById('m_nama').value, no = document.getElementById('m_no').value;
-        const t = document.getElementById('m_ttl').value, r = document.getElementById('m_ruang').value;
+        const n = document.getElementById('m_nama').value;
+        const no = document.getElementById('m_no').value;
+        const t = document.getElementById('m_ttl').value;
+        const r = document.getElementById('m_ruang').value;
         if(!n) return;
         dataSiswa.push({ Nama: n, NoPeserta: no, TTL: t, Ruang: r, Foto: '' });
         render();
@@ -196,9 +227,7 @@
         const fullDateLabel = day ? `${day}, ${date}` : `Lingga Pura, ${date}`;
 
         dataSiswa.forEach(s => {
-            // Cari foto di database berdasarkan nama file di kolom Excel
             const studentPhoto = photoDatabase[s.Foto] || '';
-            
             const div = document.createElement('div'); div.className = 'card';
             div.innerHTML = `
                 <div class="card-header">
@@ -206,23 +235,16 @@
                     <div class="header-title">KARTU PESERTA UJIAN SEKOLAH<br>${sch}</div>
                     <img src="${img.lr}" class="logo-img" style="${!img.lr ? 'visibility:hidden' : ''}">
                 </div>
-                
                 <div class="tag-ruang">RUANG ${s.Ruang || '01'}</div>
-
                 <table class="data-table">
                     <tr><td class="label-col">No. Peserta</td><td>: ${s.NoPeserta || '-'}</td></tr>
                     <tr><td>Nama Peserta</td><td>: <b style="text-transform:uppercase">${s.Nama || '-'}</b></td></tr>
                     <tr><td>Tempat & Tgl. Lahir</td><td>: ${s.TTL || '-'}</td></tr>
                 </table>
-
                 <div class="bottom-container">
                     <div class="photo-box">
-                        ${studentPhoto 
-                            ? `<img src="${studentPhoto}">` 
-                            : `<div class="photo-placeholder">PAS FOTO<br>3X4</div>`
-                        }
+                        ${studentPhoto ? `<img src="${studentPhoto}">` : `<div class="photo-placeholder">PAS FOTO<br>3X4</div>`}
                     </div>
-                    
                     <div class="footer-section">
                         <div style="font-size:9px; margin-bottom:2px">${fullDateLabel}<br>Kepala Sekolah,</div>
                         <div class="sign-area">
@@ -233,7 +255,6 @@
                         <div class="ks-nip">${nip}</div>
                     </div>
                 </div>
-                
                 <div class="note-text">Kartu ini wajib dibawa siswa selama ujian berlangsung</div>
             `;
             area.appendChild(div);
