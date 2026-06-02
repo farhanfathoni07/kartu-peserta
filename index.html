@@ -49,7 +49,7 @@
         .error-msg { color: #dc2626; font-size: 13px; margin-top: 10px; font-weight: 600; display: none; }
 
         /* ==================== STYLE APLIKASI UTAMA ==================== */
-        #main-app { display: none; } /* Tersembunyi sebelum login sukses */
+        #main-app { display: none; } 
 
         .top-navbar {
             background: white;
@@ -64,14 +64,23 @@
             z-index: 1000;
         }
         .profile-section { display: flex; align-items: center; gap: 12px; }
+        
+        /* INDIKATOR EDIT UNTUK FOTO PROFIL ADMIN (POJOK KANAN) */
         .profile-img {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .profile-name { font-weight: 700; font-size: 14px; color: var(--dark); }
+        .profile-img:hover { transform: scale(1.1); border-color: #ef4444; }
+        
+        /* INDIKATOR EDIT UNTUK NAMA ADMIN (POJOK KANAN) */
+        .profile-name { font-weight: 700; font-size: 14px; color: var(--dark); cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: 0.2s; }
+        .profile-name:hover { background: #fee2e2; color: #dc2626; }
+
         .btn-logout {
             background: #ef4444; color: white; padding: 6px 12px; border-radius: 6px;
             font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s;
@@ -113,13 +122,17 @@
         .data-table td { padding: 1.5px 0; vertical-align: top; }
         .label-col { width: 95px; }
 
+        .editable-name { cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.2s; }
+        .editable-name:hover { background: #fee2e2; color: #dc2626; outline: 1px dashed #ef4444; }
+        
         .bottom-container { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 5px; }
         
         .photo-box { 
             width: 2.1cm; height: 2.8cm; border: 1.5px solid #000; 
             display: flex; align-items: center; justify-content: center; 
-            background: var(--photo-bg); overflow: hidden;
+            background: var(--photo-bg); overflow: hidden; cursor: pointer; transition: transform 0.2s;
         }
+        .photo-box:hover { transform: scale(1.03); background: #e2e8f0; border-color: var(--primary); }
         .photo-box img { width: 100%; height: 100%; object-fit: cover; }
         .photo-placeholder { font-size: 7px; font-weight: 700; text-align: center; color: #64748b; }
         
@@ -136,6 +149,7 @@
             .container, .top-navbar, #login-page { display: none !important; } 
             body { background: white; padding: 0; }
             #print-area { margin: 0; } 
+            .editable-name:hover { background: transparent; color: inherit; outline: none; }
         }
     </style>
 </head>
@@ -162,11 +176,16 @@
 </div>
 
 <div id="main-app">
+    <input type="file" id="single-photo-picker" accept="image/*" style="display: none;">
+    <input type="file" id="admin-photo-picker" accept="image/*" style="display: none;">
+
     <nav class="top-navbar">
         <div style="font-weight: 800; color: var(--primary); letter-spacing: -0.5px;">EXAM-GEN V2.0</div>
         <div class="profile-section">
-            <span class="profile-name">AHMAD FARHAN FATHONI</span>
-            <img src="WhatsApp Image 2026-05-13 at 13.16.23.jpeg" class="profile-img" alt="Admin Profile">
+            <span class="profile-name" id="txt-admin-name" title="Klik untuk mengubah nama admin" onclick="changeAdminName()">AHMAD FARHAN FATHONI</span>
+            
+            <img src="WhatsApp Image 2026-05-13 at 13.16.23.jpeg" id="img-admin-profile" class="profile-img" alt="Admin Profile" title="Klik untuk mengganti foto profil" onclick="triggerAdminPhoto()">
+            
             <button class="btn-logout" onclick="handleLogout()">Logout</button>
         </div>
     </nav>
@@ -230,10 +249,10 @@
 </div>
 
 <script>
-    // ==================== CONFIG LOG IN (Silakan Edit Di Sini) ====================
+    // ==================== CONFIG LOG IN ====================
     const USER_AUTH = {
-        username: "admin",      // Ganti teks di dalam kutip jika ingin mengubah username
-        password: "admin123"    // Ganti teks di dalam kutip jika ingin mengubah password
+        username: "admin",      
+        password: "admin123"    
     };
 
     function checkLogin() {
@@ -261,10 +280,36 @@
         if (event.key === 'Enter') { checkLogin(); }
     });
 
+    // ==================== FITUR BARU: LOGIKA EDIT FOTO PROFIL & NAMA ADMIN ====================
+    function changeAdminName() {
+        const currentAdminName = document.getElementById('txt-admin-name').innerText;
+        const newAdminName = prompt("Masukkan Nama Admin Baru:", currentAdminName);
+        if (newAdminName !== null && newAdminName.trim() !== "") {
+            document.getElementById('txt-admin-name').innerText = newAdminName;
+        }
+    }
+
+    function triggerAdminPhoto() {
+        document.getElementById('admin-photo-picker').click();
+    }
+
+    document.getElementById('admin-photo-picker').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('img-admin-profile').src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
+    });
+
     // ==================== LOGIKA CORE UTAMA APLIKASI ====================
     let dataSiswa = [];
     let photoDatabase = {};
     let img = { lk: '', lr: '', t: '', s: '' };
+    let activePhotoTargetIndex = null; 
 
     function downloadTemplate() {
         const header = [["Nama", "NoPeserta", "TTL", "Ruang", "Foto"]];
@@ -292,7 +337,7 @@
         const t = document.getElementById('m_ttl').value;
         const r = document.getElementById('m_ruang').value;
         if(!n) return;
-        dataSiswa.push({ Nama: n, NoPeserta: no, TTL: t, Ruang: r, Foto: '' });
+        dataSiswa.push({ _id: Date.now() + Math.random(), Nama: n, NoPeserta: no, TTL: t, Ruang: r, Foto: '', CustomFotoBase64: '' });
         render();
         ['m_nama', 'm_no', 'm_ttl', 'm_ruang'].forEach(id => document.getElementById(id).value = '');
     }
@@ -309,12 +354,50 @@
         const r = new FileReader();
         r.onload = (e) => {
             const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-            dataSiswa = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+            const rawData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+            dataSiswa = rawData.map((item, index) => ({
+                _id: Date.now() + index + Math.random(),
+                Nama: item.Nama,
+                NoPeserta: item.NoPeserta,
+                TTL: item.TTL,
+                Ruang: item.Ruang,
+                Foto: item.Foto,
+                CustomFotoBase64: '' 
+            }));
             render();
         };
         r.readAsArrayBuffer(f);
     });
 
+    function changeNameInline(index) {
+        const currentName = dataSiswa[index].Nama || '';
+        const newName = prompt("Masukkan Nama Baru Untuk Siswa Ini:", currentName);
+        if (newName !== null) {
+            dataSiswa[index].Nama = newName;
+            render(); 
+        }
+    }
+
+    function triggerPhotoUpload(index) {
+        activePhotoTargetIndex = index;
+        document.getElementById('single-photo-picker').click();
+    }
+
+    document.getElementById('single-photo-picker').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file || activePhotoTargetIndex === null) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            dataSiswa[activePhotoTargetIndex].CustomFotoBase64 = event.target.result;
+            render(); 
+            activePhotoTargetIndex = null; 
+        };
+        reader.readAsDataURL(file);
+        e.target.value = ''; 
+    });
+
+    // ==================== RENDER KARTU ====================
     function render() {
         const area = document.getElementById('print-area'); area.innerHTML = '';
         const sch = document.getElementById('sch_name').value;
@@ -324,8 +407,8 @@
         const date = document.getElementById('exam_date').value;
         const fullDateLabel = day ? `${day}, ${date}` : `Lingga Pura, ${date}`;
 
-        dataSiswa.forEach(s => {
-            const studentPhoto = photoDatabase[s.Foto] || '';
+        dataSiswa.forEach((s, index) => {
+            const studentPhoto = s.CustomFotoBase64 || photoDatabase[s.Foto] || '';
             const div = document.createElement('div'); div.className = 'card';
             div.innerHTML = `
                 <div class="card-header">
@@ -336,12 +419,15 @@
                 <div class="tag-ruang">RUANG ${s.Ruang || '01'}</div>
                 <table class="data-table">
                     <tr><td class="label-col">No. Peserta</td><td>: ${s.NoPeserta || '-'}</td></tr>
-                    <tr><td>Nama Peserta</td><td>: <b style="text-transform:uppercase">${s.Nama || '-'}</b></td></tr>
+                    <tr>
+                        <td>Nama Peserta</td>
+                        <td>: <b class="editable-name" title="Klik untuk edit nama siswa" onclick="changeNameInline(${index})" style="text-transform:uppercase">${s.Nama || '-'}</b></td>
+                    </tr>
                     <tr><td>Tempat & Tgl. Lahir</td><td>: ${s.TTL || '-'}</td></tr>
                 </table>
                 <div class="bottom-container">
-                    <div class="photo-box">
-                        ${studentPhoto ? `<img src="${studentPhoto}">` : `<div class="photo-placeholder">PAS FOTO<br>3X4</div>`}
+                    <div class="photo-box" title="Klik untuk ganti foto siswa ini" onclick="triggerPhotoUpload(${index})">
+                        ${studentPhoto ? `<img src="${studentPhoto}">` : `<div class="photo-placeholder">KLIK UNTUK<br>ISI FOTO<br>3X4</div>`}
                     </div>
                     <div class="footer-section">
                         <div style="font-size:9px; margin-bottom:2px">${fullDateLabel}<br>Kepala Sekolah,</div>
