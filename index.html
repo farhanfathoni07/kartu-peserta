@@ -5,150 +5,188 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generator Kartu Ujian - Pro Version</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --primary: #2563eb; 
-            --primary-hover: #1d4ed8;
+            --primary: #4f46e5; 
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
             --dark: #0f172a; 
-            --success: #059669; 
+            --gray-sub: #64748b;
+            --bg-main: #f8fafc;
+            --success: #10b981; 
             --photo-bg: #f1f5f9; 
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.05);
         }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; margin: 0; padding: 0; }
         
-        /* ==================== STYLE HALAMAN LOGIN ==================== */
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-main); margin: 0; padding: 0; color: var(--dark); -webkit-font-smoothing: antialiased; }
+        
+        /* ==================== MODERN LOGIN PAGE ==================== */
         .login-container {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            background: radial-gradient(circle at top right, #eef2ff 0%, #e2e8f0 100%);
             padding: 20px;
             box-sizing: border-box;
         }
         .login-card {
             background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 45px 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             box-sizing: border-box;
             text-align: center;
+            border: 1px solid rgba(255,255,255,0.8);
         }
-        .login-card h2 { color: var(--dark); margin-bottom: 8px; font-weight: 800; }
-        .login-card p { color: #64748b; font-size: 14px; margin-bottom: 24px; }
-        .form-group { text-align: left; margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px; text-transform: uppercase; }
+        .login-card h2 { color: var(--dark); margin: 0 0 8px 0; font-weight: 800; font-size: 26px; letter-spacing: -0.5px; }
+        .login-card p { color: var(--gray-sub); font-size: 14px; margin-bottom: 32px; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
         .login-btn {
-            background: var(--primary); color: white; border: none; padding: 12px; 
-            border-radius: 10px; font-weight: 700; font-size: 16px; width: 100%; 
-            cursor: pointer; margin-top: 10px; transition: 0.2s;
+            background: var(--primary); color: white; border: none; padding: 14px; 
+            border-radius: var(--radius-md); font-weight: 700; font-size: 16px; width: 100%; 
+            cursor: pointer; margin-top: 15px; transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
         }
-        .login-btn:hover { background: var(--primary-hover); }
-        .error-msg { color: #dc2626; font-size: 13px; margin-top: 10px; font-weight: 600; display: none; }
+        .login-btn:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3); }
+        .error-msg { color: #ef4444; font-size: 13px; margin-top: 12px; font-weight: 600; display: none; }
 
-        /* ==================== STYLE APLIKASI UTAMA ==================== */
+        /* ==================== MODERN APPLICATION LAYOUT ==================== */
         #main-app { display: none; } 
-
-        .top-navbar {
+        
+        .app-layout { display: flex; min-height: 100vh; }
+        
+        /* SIDEBAR COMPONENT */
+        .sidebar {
+            width: 280px;
             background: white;
-            padding: 12px 40px;
+            border-right: 1px solid #e2e8f0;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 10;
+        }
+        .sidebar-brand {
+            padding: 30px 24px;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .sidebar-menu { padding: 24px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .menu-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            border-radius: var(--radius-md); color: var(--gray-sub); font-weight: 600;
+            font-size: 14px; text-decoration: none; transition: all 0.2s; cursor: pointer;
+        }
+        .menu-item.active, .menu-item:hover { background: var(--primary-light); color: var(--primary); }
+        
+        /* MAIN CONTENT AREA */
+        .main-content { margin-left: 280px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        
+        /* TOP NAVBAR */
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: flex-end;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 9;
         }
-        .profile-section { display: flex; align-items: center; gap: 12px; }
-        
-        /* INDIKATOR EDIT UNTUK FOTO PROFIL ADMIN (POJOK KANAN) */
-        .profile-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .profile-img:hover { transform: scale(1.1); border-color: #ef4444; }
-        
-        /* INDIKATOR EDIT UNTUK NAMA ADMIN (POJOK KANAN) */
-        .profile-name { font-weight: 700; font-size: 14px; color: var(--dark); cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: 0.2s; }
-        .profile-name:hover { background: #fee2e2; color: #dc2626; }
+        .profile-section { display: flex; align-items: center; gap: 16px; background: #f1f5f9; padding: 6px 6px 6px 16px; border-radius: 30px; }
+        .profile-name { font-weight: 700; font-size: 13px; color: var(--dark); cursor: pointer; transition: 0.2s; }
+        .profile-name:hover { color: var(--primary); }
+        .profile-img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; cursor: pointer; transition: all 0.2s; border: 2px solid white; box-shadow: var(--shadow-sm); }
+        .profile-img:hover { transform: scale(1.05); }
+        .btn-logout { background: white; color: #ef4444; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; box-shadow: var(--shadow-sm); }
+        .btn-logout:hover { background: #fee2e2; }
 
-        .btn-logout {
-            background: #ef4444; color: white; padding: 6px 12px; border-radius: 6px;
-            font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s;
-        }
-        .btn-logout:hover { background: #dc2626; }
-
-        .container { max-width: 1000px; margin: 0 auto 50px auto; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .grid-main { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .panel { background: #f8fafc; border: 1.5px solid #e2e8f0; padding: 20px; border-radius: 15px; }
-        .full { grid-column: span 2; }
+        /* DASHBOARD GRID CONTAINER */
+        .dashboard-container { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .dashboard-header { margin-bottom: 32px; }
+        .dashboard-header h1 { font-size: 28px; font-weight: 800; color: var(--dark); margin: 0 0 6px 0; letter-spacing: -0.5px; }
+        .dashboard-header p { color: var(--gray-sub); margin: 0; font-size: 15px; }
         
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; width: 100%; transition: 0.2s; text-decoration: none; font-size: 14px; }
-        .btn-add { background: var(--primary); color: white; margin-top: 10px; }
-        .btn-print { background: var(--dark); color: white; padding: 15px; font-size: 16px; margin-top: 20px; }
-        .btn-template { background: var(--success); color: white; margin-bottom: 15px; }
+        .grid-main { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 32px; align-items: start; }
+        .left-column { display: flex; flex-direction: column; gap: 24px; }
         
-        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; font-family: inherit; }
+        /* CARD PANELS */
+        .panel { background: white; border: 1px solid #e2e8f0; padding: 28px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+        .panel h3 { margin: 0 0 20px 0; font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
         
-        .upload-field { position: relative; height: 38px; margin-bottom: 10px; }
+        /* BUTTON STYLE MODIFICATIONS */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 18px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; border: none; width: 100%; transition: all 0.2s; font-size: 14px; box-sizing: border-box; }
+        .btn-add { background: var(--primary); color: white; }
+        .btn-add:hover { background: var(--primary-hover); }
+        .btn-print { background: var(--dark); color: white; padding: 16px; font-size: 16px; box-shadow: 0 10px 15px -3px rgba(15,23,42,0.2); }
+        .btn-print:hover { transform: translateY(-1px); box-shadow: 0 12px 20px -3px rgba(15,23,42,0.3); }
+        .btn-template { background: white; color: var(--primary); border: 1.5px dashed var(--primary); margin-bottom: 8px; }
+        .btn-template:hover { background: var(--primary-light); }
+        
+        /* FORMS & INPUTS */
+        label.input-hint { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; margin-top: 12px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: var(--radius-md); margin-bottom: 4px; box-sizing: border-box; font-family: inherit; font-size: 14px; transition: all 0.2s; background: #f8fafc; }
+        input[type="text"]:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+        
+        /* PRETTY CUSTOM UPLOAD INPUTS */
+        .upload-field { position: relative; height: 44px; margin-bottom: 12px; }
         .upload-field input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
-        .upload-label { position: absolute; top:0; left:0; width: 100%; height: 100%; background: #fff; border: 1.5px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; padding: 0 12px; font-size: 11px; font-weight: 600; color: #64748b; box-sizing: border-box; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .upload-label { position: absolute; top:0; left:0; width: 100%; height: 100%; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: var(--radius-md); display: flex; align-items: center; padding: 0 16px; font-size: 13px; font-weight: 600; color: #64748b; box-sizing: border-box; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: all 0.2s; }
+        .upload-field:hover .upload-label { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-        #print-area { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10mm; margin: 30px auto; width: fit-content; }
+        /* LIVE PREVIEW AREA STICKY CONTAINER */
+        .sticky-preview { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 20px; }
+        .preview-title { font-size: 14px; font-weight: 700; color: var(--gray-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: -10px; }
+
+        /* ==================== CORE PRINT CARD STYLE (UNCHANGED SCALE) ==================== */
+        #print-area { display: grid; grid-template-columns: 1fr; gap: 15mm; margin-top: 10px; width: fit-content; }
         .card { 
             width: 9.5cm; height: 6.8cm; border: 1.5px solid #000; padding: 8px; position: relative; 
             box-sizing: border-box; background: #fff; overflow: hidden; page-break-inside: avoid;
+            box-shadow: var(--shadow-md); border-radius: 4px;
         }
-        
         .card-header { display: flex; align-items: center; border-bottom: 1.5px solid #000; padding-bottom: 5px; margin-bottom: 8px; }
         .logo-img { width: 35px; height: 35px; object-fit: contain; }
-        .header-title { text-align: center; flex: 1; font-weight: 700; font-size: 10px; line-height: 1.2; }
-        
-        .tag-ruang { 
-            position: absolute; top: 55px; right: 12px; font-size: 10px; font-weight: 800; 
-            border: 1.5px solid #000; padding: 3px 8px; background: #fff; text-align: center;
-        }
-
-        .data-table { font-size: 10.5px; width: 80%; border-collapse: collapse; margin-bottom: 10px; }
+        .header-title { text-align: center; flex: 1; font-weight: 700; font-size: 10px; line-height: 1.2; font-family: sans-serif; }
+        .tag-ruang { position: absolute; top: 55px; right: 12px; font-size: 10px; font-weight: 800; border: 1.5px solid #000; padding: 3px 8px; background: #fff; text-align: center; font-family: sans-serif; }
+        .data-table { font-size: 10.5px; width: 80%; border-collapse: collapse; margin-bottom: 10px; font-family: sans-serif; }
         .data-table td { padding: 1.5px 0; vertical-align: top; }
         .label-col { width: 95px; }
-
         .editable-name { cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: background 0.2s; }
         .editable-name:hover { background: #fee2e2; color: #dc2626; outline: 1px dashed #ef4444; }
-        
         .bottom-container { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 5px; }
-        
-        .photo-box { 
-            width: 2.1cm; height: 2.8cm; border: 1.5px solid #000; 
-            display: flex; align-items: center; justify-content: center; 
-            background: var(--photo-bg); overflow: hidden; cursor: pointer; transition: transform 0.2s;
-        }
-        .photo-box:hover { transform: scale(1.03); background: #e2e8f0; border-color: var(--primary); }
+        .photo-box { width: 2.1cm; height: 2.8cm; border: 1.5px solid #000; display: flex; align-items: center; justify-content: center; background: var(--photo-bg); overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+        .photo-box:hover { transform: scale(1.03); }
         .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-placeholder { font-size: 7px; font-weight: 700; text-align: center; color: #64748b; }
-        
-        .footer-section { text-align: center; width: 170px; margin-bottom: 5px; }
+        .photo-placeholder { font-size: 7px; font-weight: 700; text-align: center; color: #64748b; font-family: sans-serif; }
+        .footer-section { text-align: center; width: 170px; margin-bottom: 5px; font-family: sans-serif; }
         .sign-area { position: relative; height: 45px; }
         .img-s { position: absolute; height: 60px; left: 10px; top: -10px; opacity: 0.6; mix-blend-mode: multiply; z-index: 1; }
         .img-t { position: absolute; height: 45px; left: 45px; top: 0; mix-blend-mode: multiply; z-index: 2; }
         .ks-name { font-size: 10px; font-weight: 800; }
         .ks-nip { font-size: 9px; margin-top: 1px; }
+        .note-text { position: absolute; bottom: 6px; left: 8px; font-size: 7px; color: #444; width: auto; font-style: italic; font-family: sans-serif; }
 
-        .note-text { position: absolute; bottom: 6px; left: 8px; font-size: 7px; color: #444; width: auto; font-style: italic; }
-
+        /* ==================== PRINT CONFIGURATION ==================== */
         @media print { 
-            .container, .top-navbar, #login-page { display: none !important; } 
+            .sidebar, .main-content, .top-navbar, .container, #login-page, .dashboard-container, .preview-title { display: none !important; } 
             body { background: white; padding: 0; }
-            #print-area { margin: 0; } 
+            #print-area { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 10mm !important; margin: 0 !important; }
+            .card { box-shadow: none !important; border-radius: 0 !important; }
             .editable-name:hover { background: transparent; color: inherit; outline: none; }
         }
     </style>
@@ -157,9 +195,9 @@
 
 <div id="login-page" class="login-container">
     <div class="login-card">
-        <div style="font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 5px;">EXAM-GEN V2.0</div>
-        <h2>Selamat Datang</h2>
-        <p>Silakan login untuk mengelola kartu ujian</p>
+        <div style="font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 8px; letter-spacing: 1.5px; text-transform: uppercase;">Engine Core</div>
+        <h2>EXAM-GEN V2.0</h2>
+        <p>Silakan masuk menggunakan kredensial admin Anda</p>
         
         <div class="form-group">
             <label>Username</label>
@@ -170,7 +208,7 @@
             <input type="password" id="password" placeholder="Masukkan password">
         </div>
         
-        <button class="login-btn" onclick="checkLogin()">Masuk Ke Aplikasi</button>
+        <button class="login-btn" onclick="checkLogin()">Masuk ke Dashboard</button>
         <div id="login-error" class="error-msg">Username atau Password salah!</div>
     </div>
 </div>
@@ -179,81 +217,141 @@
     <input type="file" id="single-photo-picker" accept="image/*" style="display: none;">
     <input type="file" id="admin-photo-picker" accept="image/*" style="display: none;">
 
-    <nav class="top-navbar">
-        <div style="font-weight: 800; color: var(--primary); letter-spacing: -0.5px;">EXAM-GEN V2.0</div>
-        <div class="profile-section">
-            <span class="profile-name" id="txt-admin-name" title="Klik untuk mengubah nama admin" onclick="changeAdminName()">AHMAD FARHAN FATHONI</span>
-            
-            <img src="WhatsApp Image 2026-05-13 at 13.16.23.jpeg" id="img-admin-profile" class="profile-img" alt="Admin Profile" title="Klik untuk mengganti foto profil" onclick="triggerAdminPhoto()">
-            
-            <button class="btn-logout" onclick="handleLogout()">Logout</button>
-        </div>
-    </nav>
-
-    <div class="container">
-        <header><h1 style="text-align: center; color: var(--primary); margin-top: 0;">KARTU UJIAN GENERATOR</h1></header>
-        
-        <button class="btn btn-template" onclick="downloadTemplate()">📊 UNDUH TEMPLATE EXCEL</button>
-
-        <div class="grid-main">
-            <div class="panel">
-                <h3>📂 Data Utama</h3>
-                <div class="upload-field">
-                    <input type="file" id="fileIn" accept=".xlsx, .xls">
-                    <div class="upload-label" id="lblExcel">Pilih Data Peserta (Excel)</div>
-                </div>
-                
-                <div class="upload-field">
-                    <input type="file" id="bulkPhotos" accept="image/*" multiple onchange="handleBulkPhotos(event)">
-                    <div class="upload-label" id="lblPhotos">Upload Foto Siswa (Banyak Sekaligus)</div>
-                </div>
-
-                <input type="text" id="sch_name" value="SDN 1 LINGGA PURA TP. 2025/2026" oninput="render()">
-                
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <input type="text" id="exam_day" placeholder="Hari (Contoh: Senin)" oninput="render()">
-                    <input type="text" id="exam_date" value="18 Mei 2026" oninput="render()">
-                </div>
-
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <div class="upload-field"><input type="file" onchange="prev(event,'lk')"><div class="upload-label">Logo Kiri</div></div>
-                    <div class="upload-field"><input type="file" onchange="prev(event,'lr')"><div class="upload-label">Logo Kanan</div></div>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand">⚡ EXAM-GEN v2.0</div>
+            <div class="sidebar-menu">
+                <a class="menu-item active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Dashboard Utama
+                </a>
+                <div style="margin-top: auto; padding: 10px 0;">
+                    <button class="btn btn-print" onclick="window.print()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        CETAK KARTU
+                    </button>
                 </div>
             </div>
+        </aside>
 
-            <div class="panel">
-                <h3>🛡️ Tanda Tangan</h3>
-                <input type="text" id="ks_name" value="ROSYIDIN, S.Pd" oninput="render()">
-                <input type="text" id="ks_nip" value="NIP. 19700605 201410 1 003" oninput="render()">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <div class="upload-field"><input type="file" onchange="prev(event,'s')"><div class="upload-label">Stempel</div></div>
-                    <div class="upload-field"><input type="file" onchange="prev(event,'t')"><div class="upload-label">TTD Kepala</div></div>
+        <main class="main-content">
+            <nav class="top-navbar">
+                <div class="profile-section">
+                    <span class="profile-name" id="txt-admin-name" title="Klik untuk mengubah nama" onclick="changeAdminName()">AHMAD FARHAN FATHONI</span>
+                    <img src="WhatsApp Image 2026-05-13 at 13.16.23.jpeg" id="img-admin-profile" class="profile-img" alt="Profile" title="Klik ganti foto" onclick="triggerAdminPhoto()">
+                    <button class="btn-logout" onclick="handleLogout()">Logout</button>
+                </div>
+            </nav>
+
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <h1>Sistem Kontrol Kartu Ujian</h1>
+                    <p>Kelola data instansi, tanda tangan pejabat, dan unggah basis data siswa secara instan.</p>
+                </div>
+
+                <div class="grid-main">
+                    <div class="left-column">
+                        
+                        <div class="panel">
+                            <h3>📊 Data Manajemen & Dokumen Excel</h3>
+                            <button class="btn btn-template" onclick="downloadTemplate()">📊 UNDUH BLANGKO EXCEL</button>
+                            
+                            <label class="input-hint">Basis Data Excel Peserta</label>
+                            <div class="upload-field">
+                                <input type="file" id="fileIn" accept=".xlsx, .xls">
+                                <div class="upload-label" id="lblExcel">Pilih Data Peserta (.xlsx)</div>
+                            </div>
+                            
+                            <label class="input-hint">Paket Foto Siswa Berjemaah</label>
+                            <div class="upload-field">
+                                <input type="file" id="bulkPhotos" accept="image/*" multiple onchange="handleBulkPhotos(event)">
+                                <div class="upload-label" id="lblPhotos">Unggah Foto Massal Sekaligus</div>
+                            </div>
+
+                            <label class="input-hint">Nama Instansi / Sekolah</label>
+                            <input type="text" id="sch_name" value="SDN 1 LINGGA PURA TP. 2025/2026" oninput="render()">
+                            
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top: 8px;">
+                                <div>
+                                    <label class="input-hint">Hari Pelaksanaan</label>
+                                    <input type="text" id="exam_day" placeholder="Contoh: Senin" oninput="render()">
+                                </div>
+                                <div>
+                                    <label class="input-hint">Tanggal Terbit</label>
+                                    <input type="text" id="exam_date" value="18 Mei 2026" oninput="render()">
+                                </div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top: 8px;">
+                                <div>
+                                    <label class="input-hint">Atribut Logo Kiri</label>
+                                    <div class="upload-field"><input type="file" onchange="prev(event,'lk')"><div class="upload-label">Cari Logo Kiri</div></div>
+                                </div>
+                                <div>
+                                    <label class="input-hint">Atribut Logo Kanan</label>
+                                    <div class="upload-field"><input type="file" onchange="prev(event,'lr')"><div class="upload-label">Cari Logo Kanan</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <h3>🛡️ Validasi & Legitimasi Pejabat</h3>
+                            <label class="input-hint">Nama Kepala Instansi / Sekolah</label>
+                            <input type="text" id="ks_name" value="ROSYIDIN, S.Pd" oninput="render()">
+                            <label class="input-hint">Nomor Induk Pegawai (NIP)</label>
+                            <input type="text" id="ks_nip" value="NIP. 19700605 201410 1 003" oninput="render()">
+                            
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top: 8px;">
+                                <div>
+                                    <label class="input-hint">File Gambar Stempel Resmi</label>
+                                    <div class="upload-field"><input type="file" onchange="prev(event,'s')"><div class="upload-label">Pilih Stempel</div></div>
+                                </div>
+                                <div>
+                                    <label class="input-hint">File Tanda Tangan Digital</label>
+                                    <div class="upload-field"><input type="file" onchange="prev(event,'t')"><div class="upload-label">Pilih TTD Kepala</div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <h3>✍️ Tambah Peserta Manual</h3>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                                <div>
+                                    <label class="input-hint">Nama Lengkap Siswa</label>
+                                    <input type="text" id="m_nama" placeholder="Contoh: Budi Santoso">
+                                </div>
+                                <div>
+                                    <label class="input-hint">Nomor Ujian Peserta</label>
+                                    <input type="text" id="m_no" placeholder="Contoh: 01-002-03">
+                                </div>
+                            </div>
+                            <div style="display:grid; grid-template-columns: 1.3fr 0.7fr; gap:12px; margin-top: 8px;">
+                                <div>
+                                    <label class="input-hint">Tempat, Tanggal Lahir</label>
+                                    <input type="text" id="m_ttl" placeholder="Banyumas, 12 April 2013">
+                                </div>
+                                <div>
+                                    <label class="input-hint">Kode Ruang</label>
+                                    <input type="text" id="m_ruang" placeholder="01">
+                                </div>
+                            </div>
+                            <button class="btn btn-add" style="margin-top: 16px;" onclick="addManual()">➕ Masukkan Data Ke Antrean</button>
+                        </div>
+                    </div>
+
+                    <div class="sticky-preview">
+                        <div class="preview-title">👁️ Live Monitor Hasil Cetak</div>
+                        <div id="print-area"></div>
+                    </div>
                 </div>
             </div>
-
-            <div class="panel full">
-                <h3>✍️ Input Peserta Manual</h3>
-                <div style="display:grid; grid-template-columns: 1.5fr 1fr 1.2fr 0.5fr 0.8fr; gap:10px;">
-                    <input type="text" id="m_nama" placeholder="Nama Lengkap">
-                    <input type="text" id="m_no" placeholder="No Peserta">
-                    <input type="text" id="m_ttl" placeholder="Tempat, Tgl Lahir">
-                    <input type="text" id="m_ruang" placeholder="Ruang">
-                    <button class="btn btn-add" onclick="addManual()">Tambah</button>
-                </div>
-            </div>
-        </div>
-        <button class="btn btn-print" onclick="window.print()">CETAK KARTU</button>
+        </main>
     </div>
-
-    <div id="print-area"></div>
 </div>
 
 <script>
-    // ==================== CONFIG LOG IN ====================
-    const USER_AUTH = {
-        username: "admin",      
-        password: "admin123"    
-    };
+    // ==================== ENGINE SECURITY CORE ====================
+    const USER_AUTH = { username: "admin", password: "admin123" };
 
     function checkLogin() {
         const userIn = document.getElementById('username').value;
@@ -264,6 +362,7 @@
             document.getElementById('login-page').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             errorMsg.style.display = 'none';
+            render(); 
         } else {
             errorMsg.style.display = 'block';
         }
@@ -276,36 +375,30 @@
         document.getElementById('main-app').style.display = 'none';
     }
 
-    document.getElementById('password').addEventListener('keyup', function(event) {
-        if (event.key === 'Enter') { checkLogin(); }
+    document.getElementById('password').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') { checkLogin(); }
     });
 
-    // ==================== FITUR BARU: LOGIKA EDIT FOTO PROFIL & NAMA ADMIN ====================
+    // ==================== LIVE CONTROL INTERACTION PROFILE ====================
     function changeAdminName() {
         const currentAdminName = document.getElementById('txt-admin-name').innerText;
-        const newAdminName = prompt("Masukkan Nama Admin Baru:", currentAdminName);
+        const newAdminName = prompt("Ubah Nama Operator / Admin:", currentAdminName);
         if (newAdminName !== null && newAdminName.trim() !== "") {
             document.getElementById('txt-admin-name').innerText = newAdminName;
         }
     }
 
-    function triggerAdminPhoto() {
-        document.getElementById('admin-photo-picker').click();
-    }
+    function triggerAdminPhoto() { document.getElementById('admin-photo-picker').click(); }
 
     document.getElementById('admin-photo-picker').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
+        const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
-        reader.onload = function(event) {
-            document.getElementById('img-admin-profile').src = event.target.result;
-        };
+        reader.onload = function(event) { document.getElementById('img-admin-profile').src = event.target.result; };
         reader.readAsDataURL(file);
         e.target.value = '';
     });
 
-    // ==================== LOGIKA CORE UTAMA APLIKASI ====================
+    // ==================== CORE DATA LOADER PROCESSOR ====================
     let dataSiswa = [];
     let photoDatabase = {};
     let img = { lk: '', lr: '', t: '', s: '' };
@@ -321,9 +414,8 @@
     }
 
     function handleBulkPhotos(event) {
-        const files = event.target.files;
-        if (!files.length) return;
-        document.getElementById('lblPhotos').innerText = `${files.length} Foto Siap`;
+        const files = event.target.files; if (!files.length) return;
+        document.getElementById('lblPhotos').innerText = `${files.length} Foto Termuat`;
         Array.from(files).forEach(file => {
             const reader = new FileReader();
             reader.onload = (e) => { photoDatabase[file.name] = e.target.result; render(); };
@@ -371,11 +463,8 @@
 
     function changeNameInline(index) {
         const currentName = dataSiswa[index].Nama || '';
-        const newName = prompt("Masukkan Nama Baru Untuk Siswa Ini:", currentName);
-        if (newName !== null) {
-            dataSiswa[index].Nama = newName;
-            render(); 
-        }
+        const newName = prompt("Ubah Nama Murid:", currentName);
+        if (newName !== null) { dataSiswa[index].Nama = newName; render(); }
     }
 
     function triggerPhotoUpload(index) {
@@ -384,20 +473,17 @@
     }
 
     document.getElementById('single-photo-picker').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file || activePhotoTargetIndex === null) return;
-
+        const file = e.target.files[0]; if (!file || activePhotoTargetIndex === null) return;
         const reader = new FileReader();
         reader.onload = function(event) {
             dataSiswa[activePhotoTargetIndex].CustomFotoBase64 = event.target.result;
-            render(); 
-            activePhotoTargetIndex = null; 
+            render(); activePhotoTargetIndex = null; 
         };
         reader.readAsDataURL(file);
         e.target.value = ''; 
     });
 
-    // ==================== RENDER KARTU ====================
+    // ==================== RENDERING COMPONENT ====================
     function render() {
         const area = document.getElementById('print-area'); area.innerHTML = '';
         const sch = document.getElementById('sch_name').value;
@@ -407,7 +493,10 @@
         const date = document.getElementById('exam_date').value;
         const fullDateLabel = day ? `${day}, ${date}` : `Lingga Pura, ${date}`;
 
-        dataSiswa.forEach((s, index) => {
+        // Jika data kosong, tampilkan contoh satu kartu kosong sebagai placeholder monitor
+        const listTampil = dataSiswa.length > 0 ? dataSiswa : [{ Nama: 'NAMA PESERTA', NoPeserta: '000-000-000', TTL: 'Tempat, Tanggal Lahir', Ruang: '01', Foto: '', CustomFotoBase64: '' }];
+
+        listTampil.forEach((s, index) => {
             const studentPhoto = s.CustomFotoBase64 || photoDatabase[s.Foto] || '';
             const div = document.createElement('div'); div.className = 'card';
             div.innerHTML = `
@@ -421,13 +510,13 @@
                     <tr><td class="label-col">No. Peserta</td><td>: ${s.NoPeserta || '-'}</td></tr>
                     <tr>
                         <td>Nama Peserta</td>
-                        <td>: <b class="editable-name" title="Klik untuk edit nama siswa" onclick="changeNameInline(${index})" style="text-transform:uppercase">${s.Nama || '-'}</b></td>
+                        <td>: <b class="editable-name" title="Klik untuk edit" onclick="changeNameInline(${index})" style="text-transform:uppercase">${s.Nama || '-'}</b></td>
                     </tr>
                     <tr><td>Tempat & Tgl. Lahir</td><td>: ${s.TTL || '-'}</td></tr>
                 </table>
                 <div class="bottom-container">
-                    <div class="photo-box" title="Klik untuk ganti foto siswa ini" onclick="triggerPhotoUpload(${index})">
-                        ${studentPhoto ? `<img src="${studentPhoto}">` : `<div class="photo-placeholder">KLIK UNTUK<br>ISI FOTO<br>3X4</div>`}
+                    <div class="photo-box" title="Klik ganti foto" onclick="triggerPhotoUpload(${index})">
+                        ${studentPhoto ? `<img src="${studentPhoto}">` : `<div class="photo-placeholder">FOTO<br>3X4</div>`}
                     </div>
                     <div class="footer-section">
                         <div style="font-size:9px; margin-bottom:2px">${fullDateLabel}<br>Kepala Sekolah,</div>
