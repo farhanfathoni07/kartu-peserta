@@ -24,7 +24,7 @@
         
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-main); margin: 0; padding: 0; color: var(--dark); -webkit-font-smoothing: antialiased; }
         
-        /* ==================== MODERN LOGIN PAGE ==================== */
+        /* ==================== MODERN AUTH PAGES ==================== */
         .login-container {
             display: flex;
             justify-content: center;
@@ -50,6 +50,14 @@
         .form-group { text-align: left; margin-bottom: 20px; }
         .form-group label { display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         
+        /* Dropdown bergaya modern untuk pilihan signup */
+        select {
+            width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: var(--radius-md); 
+            margin-bottom: 4px; box-sizing: border-box; font-family: inherit; font-size: 14px; 
+            background: #f8fafc; color: var(--dark); outline: none; transition: all 0.2s;
+        }
+        select:focus { border-color: var(--primary); background: white; }
+
         .login-btn {
             background: var(--primary); color: white; border: none; padding: 14px; 
             border-radius: var(--radius-md); font-weight: 700; font-size: 16px; width: 100%; 
@@ -57,7 +65,12 @@
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
         }
         .login-btn:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3); }
+        
+        .auth-toggle-link { margin-top: 24px; font-size: 13px; color: var(--gray-sub); font-weight: 500; }
+        .auth-toggle-link span { color: var(--primary); cursor: pointer; font-weight: 700; text-decoration: underline; }
+        
         .error-msg { color: #ef4444; font-size: 13px; margin-top: 12px; font-weight: 600; display: none; }
+        .success-msg { color: var(--success); font-size: 13px; margin-top: 12px; font-weight: 600; display: none; }
 
         /* ==================== MODERN APPLICATION LAYOUT ==================== */
         #main-app { display: none; } 
@@ -211,10 +224,6 @@
         .photo-box img { width: 100%; height: 100%; object-fit: cover; }
         .photo-placeholder { font-size: 7px; font-weight: 700; text-align: center; color: #64748b; font-family: sans-serif; }
         
-        /* DINAMIS STYLE UNTUK KARTU SEMESTER (TANPA FOTO) */
-        .mode-semester .photo-box { display: none !important; }
-        .mode-semester .data-table { width: 100% !important; } /* Lebarkan tabel jika foto hilang */
-
         .footer-section { text-align: center; width: 170px; margin-bottom: 5px; font-family: sans-serif; }
         .sign-area { position: relative; height: 45px; }
         .img-s { position: absolute; height: 60px; left: 10px; top: -10px; opacity: 0.6; mix-blend-mode: multiply; z-index: 1; }
@@ -222,6 +231,11 @@
         .ks-name { font-size: 10px; font-weight: 800; }
         .ks-nip { font-size: 9px; margin-top: 1px; }
         .note-text { position: absolute; bottom: 6px; left: 8px; font-size: 7px; color: #444; width: auto; font-style: italic; font-family: sans-serif; }
+
+        /* REVISI DINAMIS UNTUK MODE SEMESTER */
+        .mode-semester .photo-box { display: none !important; }
+        .mode-semester .data-table { width: 100% !important; } 
+        .mode-semester .bottom-container { justify-content: flex-end !important; } 
 
         /* ==================== PRINT CONFIGURATION ==================== */
         @media print { 
@@ -236,10 +250,11 @@
 <body>
 
 <div id="login-page" class="login-container">
-    <div class="login-card">
+    
+    <div class="login-card" id="auth-signin-box">
         <div style="font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 8px; letter-spacing: 1.5px; text-transform: uppercase;">Engine Core</div>
         <h2>EXAM-GEN V2.0</h2>
-        <p>Login Admin (admin) atau Siswa (Username bebas, Password: siswa123)</p>
+        <p>Silakan masuk menggunakan akun Anda</p>
         
         <div class="form-group">
             <label>Username</label>
@@ -252,7 +267,42 @@
         
         <button class="login-btn" onclick="checkLogin()">Masuk ke Dashboard</button>
         <div id="login-error" class="error-msg">Username atau Password salah!</div>
+
+        <div class="auth-toggle-link">
+            Belum punya akun? <span onclick="toggleAuthForm('signup')">Daftar Sekarang</span>
+        </div>
     </div>
+
+    <div class="login-card" id="auth-signup-box" style="display: none;">
+        <div style="font-size: 13px; font-weight: 800; color: var(--success); margin-bottom: 8px; letter-spacing: 1.5px; text-transform: uppercase;">Registrasi Akun</div>
+        <h2>BUAT AKUN BARU</h2>
+        <p>Daftarkan akun administrator atau siswa baru Anda</p>
+        
+        <div class="form-group">
+            <label>Pilih Otoritas Akun</label>
+            <select id="reg-role">
+                <option value="user">Siswa / User Biasa</option>
+                <option value="admin">Administrator (Akses Penuh)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Username Baru</label>
+            <input type="text" id="reg-username" placeholder="Buat nama pengguna">
+        </div>
+        <div class="form-group">
+            <label>Password Baru</label>
+            <input type="password" id="reg-password" placeholder="Buat kata sandi minimal 4 karakter">
+        </div>
+        
+        <button class="login-btn" style="background: var(--success);" onclick="handleSignUp()">Selesaikan Pendaftaran</button>
+        <div id="reg-error" class="error-msg">Mohon isi seluruh data dengan benar!</div>
+        <div id="reg-success" class="success-msg">Pendaftaran berhasil! Mengalihkan...</div>
+
+        <div class="auth-toggle-link">
+            Sudah memiliki akun? <span onclick="toggleAuthForm('signin')">Masuk Sekarang</span>
+        </div>
+    </div>
+
 </div>
 
 <div id="main-app">
@@ -418,7 +468,7 @@
                                 </tr>
                             </thead>
                             <tbody id="log-table-body">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                     <button class="btn btn-danger" onclick="clearLogs()">🧹 Bersihkan Semua Riwayat</button>
@@ -430,27 +480,111 @@
 </div>
 
 <script>
-    // ==================== CONFIG MULTI-USER & MODE TAMPILAN ====================
+    // ==================== DATABASE USERS & AUTH LOGIC ====================
     let CURRENT_ROLE = "user"; 
     let CURRENT_USER_NAME = "";
-    let CARD_MODE = "ujian"; // Pilihan mode default: 'ujian' atau 'semester'
+    let CARD_MODE = "ujian"; 
 
+    // Fungsi inisialisasi akun bawaan jika localStorage masih kosong
+    function initUserDatabase() {
+        if (!localStorage.getItem('userDatabase')) {
+            const defaultUsers = [
+                { username: 'admin', password: 'admin123', role: 'admin', fullName: 'AHMAD FARHAN FATHONI' },
+                { username: 'siswa', password: 'siswa123', role: 'user', fullName: 'SISWA UTAMA' }
+            ];
+            localStorage.setItem('userDatabase', JSON.stringify(defaultUsers));
+        }
+    }
+    initUserDatabase();
+
+    // Mengganti form aktif antara Sign-In dan Sign-Up
+    function toggleAuthForm(mode) {
+        const signinBox = document.getElementById('auth-signin-box');
+        const signupBox = document.getElementById('auth-signup-box');
+        
+        // Bersihkan pesan kesalahan
+        document.getElementById('login-error').style.display = 'none';
+        document.getElementById('reg-error').style.display = 'none';
+        document.getElementById('reg-success').style.display = 'none';
+
+        if (mode === 'signup') {
+            signinBox.style.display = 'none';
+            signupBox.style.display = 'block';
+        } else {
+            signinBox.style.display = 'block';
+            signupBox.style.display = 'none';
+        }
+    }
+
+    // Fungsi Pemrosesan Pendaftaran Akun Baru (SIGN-UP)
+    function handleSignUp() {
+        const role = document.getElementById('reg-role').value;
+        const userIn = document.getElementById('reg-username').value.trim();
+        const passIn = document.getElementById('reg-password').value;
+        const errEl = document.getElementById('reg-error');
+        const succEl = document.getElementById('reg-success');
+
+        if (!userIn || passIn.length < 4) {
+            errEl.innerText = "Username tidak boleh kosong & Password minimal 4 karakter!";
+            errEl.style.display = 'block';
+            return;
+        }
+
+        let db = JSON.parse(localStorage.getItem('userDatabase'));
+        
+        // Proteksi cek kecocokan username agar tidak duplikat
+        const isExist = db.some(u => u.username.toLowerCase() === userIn.toLowerCase());
+        if (isExist) {
+            errEl.innerText = "Username sudah terdaftar! Gunakan nama lain.";
+            errEl.style.display = 'block';
+            return;
+        }
+
+        // Daftarkan akun ke database lokal
+        const newUser = {
+            username: userIn.toLowerCase(),
+            password: passIn,
+            role: role,
+            fullName: userIn.toUpperCase()
+        };
+        db.push(newUser);
+        localStorage.setItem('userDatabase', JSON.stringify(db));
+
+        errEl.style.display = 'none';
+        succEl.style.display = 'block';
+
+        // Bersihkan input field pendaftaran
+        document.getElementById('reg-username').value = '';
+        document.getElementById('reg-password').value = '';
+
+        // Otomatis pindah ke form Sign-In setelah jeda 1.5 detik
+        setTimeout(() => {
+            toggleAuthForm('signin');
+            document.getElementById('username').value = newUser.username;
+        }, 1500);
+    }
+
+    // Fungsi Validasi Log Masuk Akun (SIGN-IN)
     function checkLogin() {
-        const userIn = document.getElementById('username').value.trim();
+        const userIn = document.getElementById('username').value.trim().toLowerCase();
         const passIn = document.getElementById('password').value;
         const errorMsg = document.getElementById('login-error');
 
-        if (userIn.toLowerCase() === "admin" && passIn === "admin123") {
-            CURRENT_ROLE = "admin";
-            CURRENT_USER_NAME = localStorage.getItem('savedAdminName') || "AHMAD FARHAN FATHONI";
+        let db = JSON.parse(localStorage.getItem('userDatabase')) || [];
+        
+        // Cari akun yang cocok di dalam database lokal terenkripsi
+        const matchedUser = db.find(u => u.username === userIn && u.password === passIn);
+
+        if (matchedUser) {
+            CURRENT_ROLE = matchedUser.role;
+            // Jika akun bawaan admin belum diubah manual namanya, ikuti profile bawaan
+            if(matchedUser.username === 'admin') {
+                CURRENT_USER_NAME = localStorage.getItem('savedAdminName') || matchedUser.fullName;
+            } else {
+                CURRENT_USER_NAME = matchedUser.fullName;
+            }
             executeGrantAccess();
-        } 
-        else if (userIn !== "" && passIn === "siswa123") {
-            CURRENT_ROLE = "user";
-            CURRENT_USER_NAME = userIn.toUpperCase();
-            executeGrantAccess();
-        } 
-        else {
+        } else {
             errorMsg.style.display = 'block';
         }
     }
@@ -469,9 +603,7 @@
         if (CURRENT_ROLE === "admin") {
             reportMenu.style.display = "flex"; 
             adminProfileImg.setAttribute("onclick", "triggerAdminPhoto()");
-            adminProfileImg.setAttribute("title", "Klik ganti foto profil admin");
             adminProfileTxt.setAttribute("onclick", "changeAdminName()");
-            adminProfileTxt.setAttribute("title", "Klik untuk mengubah nama admin");
         } else {
             reportMenu.style.display = "none"; 
             adminProfileImg.removeAttribute("onclick");
@@ -480,7 +612,7 @@
 
         saveAccessLog(CURRENT_USER_NAME, CURRENT_ROLE);
         switchSection('main-dashboard');
-        switchCardMode('ujian'); // Default saat login masuk ke kartu ujian dulu
+        switchCardMode('ujian'); 
     }
 
     function handleLogout() {
@@ -488,13 +620,13 @@
         document.getElementById('password').value = '';
         document.getElementById('login-page').style.display = 'flex';
         document.getElementById('main-app').style.display = 'none';
+        toggleAuthForm('signin');
     }
 
     document.getElementById('password').addEventListener('keyup', function(e) {
         if (e.key === 'Enter') { checkLogin(); }
     });
 
-    // ==================== LOGIKA LOCALSTORAGE LOG AUDIT ====================
     function saveAccessLog(name, role) {
         let currentLogs = JSON.parse(localStorage.getItem('examGenLogs')) || [];
         const sekarang = new Date();
@@ -537,7 +669,6 @@
         }
     }
 
-    // Navigasi Antar Menu Utama
     function switchSection(sectionId) {
         document.querySelectorAll('.app-section').forEach(section => section.classList.remove('active'));
         document.querySelectorAll('.sidebar .menu-item').forEach(item => item.classList.remove('active'));
@@ -557,12 +688,10 @@
         }
     }
 
-    // Fungsi Toggle Klik Menu Utama untuk menyembunyikan/menampilkan submenu
     function toggleSubmenu() {
         switchSection('main-dashboard');
     }
 
-    // ==================== MODE SWITCH SUB-MENU KARTU ====================
     function switchCardMode(mode) {
         CARD_MODE = mode;
         document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
@@ -581,12 +710,11 @@
             document.getElementById('sub-semester').classList.add('active');
             titleEl.innerText = "Sistem Kontrol Kartu Semester";
             descEl.innerText = "Kelola data instansi untuk mencetak kartu ujian semester hemat tinta (Tanpa Foto).";
-            photoPanel.style.display = "none"; // Sembunyikan panel unggah foto massal karena tidak terpakai
+            photoPanel.style.display = "none"; 
         }
-        render(); // Render ulang tampilan monitor kartu
+        render(); 
     }
 
-    // ==================== LIVE CONTROL PROFILE ADMIN ====================
     function changeAdminName() {
         if (CURRENT_ROLE !== "admin") return;
         const currentAdminName = document.getElementById('txt-admin-name').innerText;
@@ -677,7 +805,7 @@
     }
 
     function triggerPhotoUpload(index) {
-        if(CARD_MODE === 'semester') return; // Nonaktifkan upload foto jika di mode kartu semester
+        if(CARD_MODE === 'semester') return; 
         activePhotoTargetIndex = index;
         document.getElementById('single-photo-picker').click();
     }
@@ -705,14 +833,12 @@
 
         const listTampil = dataSiswa.length > 0 ? dataSiswa : [{ Nama: 'NAMA PESERTA', NoPeserta: '000-000-000', TTL: 'Tempat, Tanggal Lahir', Ruang: '01', Foto: '', CustomFotoBase64: '' }];
 
-        // Judul dinamis pada kop kartu mengikuti menu yang diklik
         const textKopKartu = CARD_MODE === 'ujian' ? 'KARTU PESERTA UJIAN SEKOLAH' : 'KARTU PESERTA UJIAN SEMESTER';
 
         listTampil.forEach((s, index) => {
             const studentPhoto = s.CustomFotoBase64 || photoDatabase[s.Foto] || '';
             const div = document.createElement('div'); 
             
-            // Tambahkan class khusus 'mode-semester' jika menunya adalah kartu semester
             div.className = `card ${CARD_MODE === 'semester' ? 'mode-semester' : ''}`;
             
             div.innerHTML = `
