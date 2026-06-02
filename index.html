@@ -7,10 +7,50 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --dark: #0f172a; --success: #059669; --photo-bg: #f1f5f9; }
+        :root { 
+            --primary: #2563eb; 
+            --primary-hover: #1d4ed8;
+            --dark: #0f172a; 
+            --success: #059669; 
+            --photo-bg: #f1f5f9; 
+        }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; margin: 0; padding: 0; }
         
-        /* Navbar Header Style */
+        /* ==================== STYLE HALAMAN LOGIN ==================== */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .login-card h2 { color: var(--dark); margin-bottom: 8px; font-weight: 800; }
+        .login-card p { color: #64748b; font-size: 14px; margin-bottom: 24px; }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px; text-transform: uppercase; }
+        .login-btn {
+            background: var(--primary); color: white; border: none; padding: 12px; 
+            border-radius: 10px; font-weight: 700; font-size: 16px; width: 100%; 
+            cursor: pointer; margin-top: 10px; transition: 0.2s;
+        }
+        .login-btn:hover { background: var(--primary-hover); }
+        .error-msg { color: #dc2626; font-size: 13px; margin-top: 10px; font-weight: 600; display: none; }
+
+        /* ==================== STYLE APLIKASI UTAMA ==================== */
+        #main-app { display: none; } /* Tersembunyi sebelum login sukses */
+
         .top-navbar {
             background: white;
             padding: 12px 40px;
@@ -32,6 +72,11 @@
             border: 2px solid var(--primary);
         }
         .profile-name { font-weight: 700; font-size: 14px; color: var(--dark); }
+        .btn-logout {
+            background: #ef4444; color: white; padding: 6px 12px; border-radius: 6px;
+            font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s;
+        }
+        .btn-logout:hover { background: #dc2626; }
 
         .container { max-width: 1000px; margin: 0 auto 50px auto; background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .grid-main { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -43,7 +88,7 @@
         .btn-print { background: var(--dark); color: white; padding: 15px; font-size: 16px; margin-top: 20px; }
         .btn-template { background: var(--success); color: white; margin-bottom: 15px; }
         
-        input[type="text"] { width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; font-family: inherit; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; font-family: inherit; }
         
         .upload-field { position: relative; height: 38px; margin-bottom: 10px; }
         .upload-field input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
@@ -88,7 +133,7 @@
         .note-text { position: absolute; bottom: 6px; left: 8px; font-size: 7px; color: #444; width: auto; font-style: italic; }
 
         @media print { 
-            .container, .top-navbar { display: none; } 
+            .container, .top-navbar, #login-page { display: none !important; } 
             body { background: white; padding: 0; }
             #print-area { margin: 0; } 
         }
@@ -96,74 +141,127 @@
 </head>
 <body>
 
-<!-- BAGIAN ATAS DENGAN ICON PROFIL -->
-<nav class="top-navbar">
-    <div style="font-weight: 800; color: var(--primary); letter-spacing: -0.5px;">EXAM-GEN V2.0</div>
-    <div class="profile-section">
-        <span class="profile-name">AHMAD FARHAN FATHONI</span>
-        <!-- Menggunakan file yang dilampirkan -->
-        <img src="WhatsApp Image 2026-05-13 at 13.16.23.jpeg" class="profile-img" alt="Admin Profile">
+<div id="login-page" class="login-container">
+    <div class="login-card">
+        <div style="font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 5px;">EXAM-GEN V2.0</div>
+        <h2>Selamat Datang</h2>
+        <p>Silakan login untuk mengelola kartu ujian</p>
+        
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="username" placeholder="Masukkan username">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Masukkan password">
+        </div>
+        
+        <button class="login-btn" onclick="checkLogin()">Masuk Ke Aplikasi</button>
+        <div id="login-error" class="error-msg">Username atau Password salah!</div>
     </div>
-</nav>
-
-<div class="container">
-    <header><h1 style="text-align: center; color: var(--primary); margin-top: 0;">KARTU UJIAN GENERATOR</h1></header>
-    
-    <button class="btn btn-template" onclick="downloadTemplate()">📊 UNDUH TEMPLATE EXCEL</button>
-
-    <div class="grid-main">
-        <div class="panel">
-            <h3>📂 Data Utama</h3>
-            <div class="upload-field">
-                <input type="file" id="fileIn" accept=".xlsx, .xls">
-                <div class="upload-label" id="lblExcel">Pilih Data Peserta (Excel)</div>
-            </div>
-            
-            <div class="upload-field">
-                <input type="file" id="bulkPhotos" accept="image/*" multiple onchange="handleBulkPhotos(event)">
-                <div class="upload-label" id="lblPhotos">Upload Foto Siswa (Banyak Sekaligus)</div>
-            </div>
-
-            <input type="text" id="sch_name" value="SDN 1 LINGGA PURA TP. 2025/2026" oninput="render()">
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <input type="text" id="exam_day" placeholder="Hari (Contoh: Senin)" oninput="render()">
-                <input type="text" id="exam_date" value="18 Mei 2026" oninput="render()">
-            </div>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div class="upload-field"><input type="file" onchange="prev(event,'lk')"><div class="upload-label">Logo Kiri</div></div>
-                <div class="upload-field"><input type="file" onchange="prev(event,'lr')"><div class="upload-label">Logo Kanan</div></div>
-            </div>
-        </div>
-
-        <div class="panel">
-            <h3>🛡️ Tanda Tangan</h3>
-            <input type="text" id="ks_name" value="ROSYIDIN, S.Pd" oninput="render()">
-            <input type="text" id="ks_nip" value="NIP. 19700605 201410 1 003" oninput="render()">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div class="upload-field"><input type="file" onchange="prev(event,'s')"><div class="upload-label">Stempel</div></div>
-                <div class="upload-field"><input type="file" onchange="prev(event,'t')"><div class="upload-label">TTD Kepala</div></div>
-            </div>
-        </div>
-
-        <div class="panel full">
-            <h3>✍️ Input Peserta Manual</h3>
-            <div style="display:grid; grid-template-columns: 1.5fr 1fr 1.2fr 0.5fr 0.8fr; gap:10px;">
-                <input type="text" id="m_nama" placeholder="Nama Lengkap">
-                <input type="text" id="m_no" placeholder="No Peserta">
-                <input type="text" id="m_ttl" placeholder="Tempat, Tgl Lahir">
-                <input type="text" id="m_ruang" placeholder="Ruang">
-                <button class="btn btn-add" onclick="addManual()">Tambah</button>
-            </div>
-        </div>
-    </div>
-    <button class="btn btn-print" onclick="window.print()">CETAK KARTU</button>
 </div>
 
-<div id="print-area"></div>
+<div id="main-app">
+    <nav class="top-navbar">
+        <div style="font-weight: 800; color: var(--primary); letter-spacing: -0.5px;">EXAM-GEN V2.0</div>
+        <div class="profile-section">
+            <span class="profile-name">AHMAD FARHAN FATHONI</span>
+            <img src="WhatsApp Image 2026-05-13 at 13.16.23.jpeg" class="profile-img" alt="Admin Profile">
+            <button class="btn-logout" onclick="handleLogout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header><h1 style="text-align: center; color: var(--primary); margin-top: 0;">KARTU UJIAN GENERATOR</h1></header>
+        
+        <button class="btn btn-template" onclick="downloadTemplate()">📊 UNDUH TEMPLATE EXCEL</button>
+
+        <div class="grid-main">
+            <div class="panel">
+                <h3>📂 Data Utama</h3>
+                <div class="upload-field">
+                    <input type="file" id="fileIn" accept=".xlsx, .xls">
+                    <div class="upload-label" id="lblExcel">Pilih Data Peserta (Excel)</div>
+                </div>
+                
+                <div class="upload-field">
+                    <input type="file" id="bulkPhotos" accept="image/*" multiple onchange="handleBulkPhotos(event)">
+                    <div class="upload-label" id="lblPhotos">Upload Foto Siswa (Banyak Sekaligus)</div>
+                </div>
+
+                <input type="text" id="sch_name" value="SDN 1 LINGGA PURA TP. 2025/2026" oninput="render()">
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <input type="text" id="exam_day" placeholder="Hari (Contoh: Senin)" oninput="render()">
+                    <input type="text" id="exam_date" value="18 Mei 2026" oninput="render()">
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div class="upload-field"><input type="file" onchange="prev(event,'lk')"><div class="upload-label">Logo Kiri</div></div>
+                    <div class="upload-field"><input type="file" onchange="prev(event,'lr')"><div class="upload-label">Logo Kanan</div></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>🛡️ Tanda Tangan</h3>
+                <input type="text" id="ks_name" value="ROSYIDIN, S.Pd" oninput="render()">
+                <input type="text" id="ks_nip" value="NIP. 19700605 201410 1 003" oninput="render()">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div class="upload-field"><input type="file" onchange="prev(event,'s')"><div class="upload-label">Stempel</div></div>
+                    <div class="upload-field"><input type="file" onchange="prev(event,'t')"><div class="upload-label">TTD Kepala</div></div>
+                </div>
+            </div>
+
+            <div class="panel full">
+                <h3>✍️ Input Peserta Manual</h3>
+                <div style="display:grid; grid-template-columns: 1.5fr 1fr 1.2fr 0.5fr 0.8fr; gap:10px;">
+                    <input type="text" id="m_nama" placeholder="Nama Lengkap">
+                    <input type="text" id="m_no" placeholder="No Peserta">
+                    <input type="text" id="m_ttl" placeholder="Tempat, Tgl Lahir">
+                    <input type="text" id="m_ruang" placeholder="Ruang">
+                    <button class="btn btn-add" onclick="addManual()">Tambah</button>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-print" onclick="window.print()">CETAK KARTU</button>
+    </div>
+
+    <div id="print-area"></div>
+</div>
 
 <script>
+    // ==================== CONFIG LOG IN (Silakan Edit Di Sini) ====================
+    const USER_AUTH = {
+        username: "admin",      // Ganti teks di dalam kutip jika ingin mengubah username
+        password: "admin123"    // Ganti teks di dalam kutip jika ingin mengubah password
+    };
+
+    function checkLogin() {
+        const userIn = document.getElementById('username').value;
+        const passIn = document.getElementById('password').value;
+        const errorMsg = document.getElementById('login-error');
+
+        if (userIn === USER_AUTH.username && passIn === USER_AUTH.password) {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            errorMsg.style.display = 'none';
+        } else {
+            errorMsg.style.display = 'block';
+        }
+    }
+
+    function handleLogout() {
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('login-page').style.display = 'flex';
+        document.getElementById('main-app').style.display = 'none';
+    }
+
+    document.getElementById('password').addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') { checkLogin(); }
+    });
+
+    // ==================== LOGIKA CORE UTAMA APLIKASI ====================
     let dataSiswa = [];
     let photoDatabase = {};
     let img = { lk: '', lr: '', t: '', s: '' };
